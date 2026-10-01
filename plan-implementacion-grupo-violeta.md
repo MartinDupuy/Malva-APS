@@ -66,7 +66,7 @@ El Sprint 0 contiene las historias 1, 2 y 3, por lo que se detallan a nivel de c
 
 ---
 
-## US2 – Modelo de datos de asientos y concurrencia (20 h)
+## US2 – Modelo de datos de asientos y concurrencia (20 h) ✅
 
 **Rama:** `feature/us-2-modelo-asientos`
 
@@ -74,12 +74,12 @@ El Sprint 0 contiene las historias 1, 2 y 3, por lo que se detallan a nivel de c
 
 | # | Commit | Pasos | Horas |
 |---|---|---|---|
-| 1 | `docs(seats): document critical concurrency scenarios` | Casos: dos compradores (web y app) sobre el mismo asiento, expiración del bloqueo en pleno pago, pago fallido, compra de varios pasajes con un asiento ya tomado. | 2 |
-| 2 | `docs(seats): add entity-relationship model` | Entidades: `Flight` (definición/ruta), `FlightInstance` (salida en una fecha concreta), `CabinClass`, `Seat`, `Fare`, `Booking`, `Ticket`, `SeatHold`. Separar el vuelo programado de su ocurrencia por fecha evita duplicar datos. | 3 |
-| 3 | `docs(seats): design temporary seat locking mechanism` | Ver detalle abajo. | 4 |
-| 4 | `docs(seats): add sequence and class diagrams` | Secuencias: búsqueda de disponibilidad, bloqueo, confirmación de pago, expiración. Clases del dominio de asientos. | 5 |
-| 5 | `docs(seats): record model review with development team` | Acta de revisión y ajustes. | 6 |
-| 6 *(opcional)* | `test(seats): prove no overbooking under concurrent hold attempts` | Prototipo descartable: N hilos intentan bloquear el mismo asiento y exactamente uno lo logra. Valida el diseño antes de implementarlo. | — |
+| 1 ✅ | `docs(seats): document critical concurrency scenarios` | Casos: dos compradores (web y app) sobre el mismo asiento, expiración del bloqueo en pleno pago, pago fallido, compra de varios pasajes con un asiento ya tomado. | 2 |
+| 2 ✅ | `docs(seats): add entity-relationship model` | Entidades: `Flight` (definición/ruta), `FlightInstance` (salida en una fecha concreta), `CabinClass`, `Seat`, `Fare`, `Booking`, `Ticket`, `SeatHold`. Separar el vuelo programado de su ocurrencia por fecha evita duplicar datos. | 3 |
+| 3 ✅ | `docs(seats): design temporary seat locking mechanism` | Ver detalle abajo. | 4 |
+| 4 ✅ | `docs(seats): add sequence and class diagrams` | Secuencias: búsqueda de disponibilidad, bloqueo, confirmación de pago, expiración. Clases del dominio de asientos. | 5 |
+| 5 ✅ | `docs(seats): record model review with development team` | Acta de revisión y ajustes. | 6 |
+| 6 ✅ *(opcional)* | `test(seats): prove no overbooking under concurrent hold attempts` | Prototipo descartable: N hilos intentan bloquear el mismo asiento y exactamente uno lo logra. Valida el diseño antes de implementarlo. | — |
 
 ### Mecanismo de bloqueo temporal (contenido del commit 3)
 
