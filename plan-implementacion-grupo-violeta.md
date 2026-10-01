@@ -43,7 +43,7 @@ El Sprint 0 contiene las historias 1, 2 y 3, por lo que se detallan a nivel de c
 
 ---
 
-## US1 – Arquitectura e infraestructura inicial (27 h)
+## US1 – Arquitectura e infraestructura inicial (27 h) ✅
 
 **Rama:** `feature/us-1-arquitectura-base`
 
