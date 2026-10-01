@@ -97,7 +97,7 @@ El Sprint 0 contiene las historias 1, 2 y 3, por lo que se detallan a nivel de c
 
 ---
 
-## US3 – Proveedor de pagos y contingencia (15 h)
+## US3 – Proveedor de pagos y contingencia (15 h) ✅
 
 **Rama:** `feature/us-3-integracion-pagos`
 
@@ -105,17 +105,17 @@ Es la única historia del sprint con código. Diseño: puerto `PaymentGateway`, 
 
 | # | Commit | Pasos |
 |---|---|---|
-| 1 | `docs(payments): evaluate providers and select primary and fallback` | Comparar proveedores (documentación, SDK, sandbox, comisiones, cobertura local). Registrar la decisión en un ADR. *(5 h)* |
-| 2 | `feat(payments): add Money value object` | Monto y moneda inmutables, validaciones (no negativo), sin `Double` para dinero. Tests unitarios. |
-| 3 | `feat(payments): define PaymentGateway port and result types` | Interfaz `PaymentGateway`, `PaymentRequest`, resultado cerrado (aprobado / rechazado / error transitorio). Los errores transitorios y los rechazos de negocio se distinguen desde el tipo, porque solo los primeros se reintentan. |
-| 4 | `feat(payments): implement primary provider adapter` | Adaptador contra el sandbox del proveedor principal. Traduce respuestas del proveedor a los tipos del dominio. Credenciales por entorno. |
-| 5 | `test(payments): add simulated charge tests for primary adapter` | Cobros simulados exitosos, rechazados y con error de red. *(2 h)* |
-| 6 | `feat(payments): implement fallback provider adapter` | Segundo adaptador con el mismo contrato. |
-| 7 | `feat(payments): add retry policy with backoff` | `RetryPolicy` aislada y configurable (intentos, espera), aplicada solo a errores transitorios. |
-| 8 | `feat(payments): add idempotency key to payment requests` | Clave de idempotencia por intento de compra para no cobrar dos veces al reintentar o cambiar de proveedor. |
-| 9 | `feat(payments): add failover decorator with circuit breaker` | `ResilientPaymentGateway`: intenta el principal con reintentos; si el circuito se abre o se agotan los intentos, pasa al de contingencia. *(4 h junto con los commits 7 y 8)* |
-| 10 | `test(payments): cover failover and retry scenarios` | Caída del principal, recuperación, doble fallo, idempotencia. |
-| 11 | `docs(payments): add payment module specification and contingency plan` | Contrato del módulo, flujo de errores, runbook de caída del proveedor. *(4 h)* |
+| 1 ✅ | `docs(payments): evaluate providers and select primary and fallback` | Comparar proveedores (documentación, SDK, sandbox, comisiones, cobertura local). Registrar la decisión en un ADR. *(5 h)* |
+| 2 ✅ | `feat(payments): add Money value object` | Monto y moneda inmutables, validaciones (no negativo), sin `Double` para dinero. Tests unitarios. |
+| 3 ✅ | `feat(payments): define PaymentGateway port and result types` | Interfaz `PaymentGateway`, `PaymentRequest`, resultado cerrado (aprobado / rechazado / error transitorio). Los errores transitorios y los rechazos de negocio se distinguen desde el tipo, porque solo los primeros se reintentan. |
+| 4 ✅ | `feat(payments): implement primary provider adapter` | Adaptador contra el sandbox del proveedor principal. Traduce respuestas del proveedor a los tipos del dominio. Credenciales por entorno. |
+| 5 ✅ | `test(payments): add simulated charge tests for primary adapter` | Cobros simulados exitosos, rechazados y con error de red. *(2 h)* |
+| 6 ✅ | `feat(payments): implement fallback provider adapter` | Segundo adaptador con el mismo contrato. |
+| 7 ✅ | `feat(payments): add retry policy with backoff` | `RetryPolicy` aislada y configurable (intentos, espera), aplicada solo a errores transitorios. |
+| 8 ✅ | `feat(payments): add idempotency key to payment requests` | Clave de idempotencia por intento de compra para no cobrar dos veces al reintentar o cambiar de proveedor. |
+| 9 ✅ | `feat(payments): add failover decorator with circuit breaker` | `ResilientPaymentGateway`: intenta el principal con reintentos; si el circuito se abre o se agotan los intentos, pasa al de contingencia. *(4 h junto con los commits 7 y 8)* |
+| 10 ✅ | `test(payments): cover failover and retry scenarios` | Caída del principal, recuperación, doble fallo, idempotencia. |
+| 11 ✅ | `docs(payments): add payment module specification and contingency plan` | Contrato del módulo, flujo de errores, runbook de caída del proveedor. *(4 h)* |
 
 **Verificación de criterios de aceptación**
 
