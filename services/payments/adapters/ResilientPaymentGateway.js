@@ -31,16 +31,16 @@ class ResilientPaymentGateway extends PaymentGateway {
     try {
       // Use retry policy on the primary gateway
       const result = await this.retryPolicy.execute(() => this.primaryGateway.processPayment(request));
-      
+
       if (result.isTransientError()) {
         // Retry policy exhausted all attempts and returned a transient error
         return this._handlePrimaryFailure(request, result);
       }
-      
+
       // Success or business rejection (not a technical failure)
       this._resetCircuitBreaker();
       return result;
-      
+
     } catch (error) {
       // Retry policy exhausted and threw an error
       return this._handlePrimaryFailure(request, error);
@@ -51,23 +51,23 @@ class ResilientPaymentGateway extends PaymentGateway {
     this.consecutiveFailures++;
     this.lastFailureTime = Date.now();
     console.error(`Primary gateway failed. Consecutive failures: ${this.consecutiveFailures}`);
-    
+
     if (this.consecutiveFailures >= this.failureThreshold) {
       console.error('Failure threshold reached. Opening circuit.');
       this.circuitOpen = true;
     }
-    
+
     console.log('Failing over to fallback gateway.');
     return this._useFallback(request);
   }
 
   async _useFallback(request) {
     try {
-      // For simplicity, we don't apply the full retry policy on the fallback here, 
+      // For simplicity, we don't apply the full retry policy on the fallback here,
       // but in a real scenario we might want a simple retry for the fallback as well.
       return await this.fallbackGateway.processPayment(request);
     } catch (error) {
-      return PaymentResult.transientError(`Fallback failed as well: ${error.message}`);
+      throw new Error(`Fallback failed as well: ${error.message}`);
     }
   }
 
@@ -79,7 +79,7 @@ class ResilientPaymentGateway extends PaymentGateway {
         this.circuitOpen = false;
         // In a true half-open state, we'd allow one request through and if it fails, immediately open again.
         // For this basic implementation, we just reset the count.
-        this.consecutiveFailures = 0; 
+        this.consecutiveFailures = 0;
       }
     }
   }
