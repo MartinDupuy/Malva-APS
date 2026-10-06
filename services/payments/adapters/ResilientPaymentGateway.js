@@ -32,7 +32,7 @@ class ResilientPaymentGateway extends PaymentGateway {
       // Use retry policy on the primary gateway
       const result = await this.retryPolicy.execute(() => this.primaryGateway.processPayment(request));
 
-      if (result.isTransientError()) {
+      if (result && typeof result.isTransientError === 'function' && result.isTransientError()) {
         // Retry policy exhausted all attempts and returned a transient error
         return this._handlePrimaryFailure(request, result);
       }
