@@ -84,7 +84,7 @@ class SearchFlights {
   }
 
   _priceInUnits(price) {
-    return price.amount / 100;
+    return typeof price === 'number' ? price : price.amount / 100;
   }
 }
 

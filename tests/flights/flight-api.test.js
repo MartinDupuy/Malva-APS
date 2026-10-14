@@ -92,6 +92,15 @@ describe('Flight REST API with Express', () => {
     expect(response.body[0].flightNumber).toBe('AR1234');
   });
 
+  test('filters tariffs serialized as numbers', async () => {
+    await request(port, 'POST', '/api/flights', validFlight());
+
+    const response = await request(port, 'GET', '/api/flights/search?tariff=100');
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual([]);
+  });
+
   test('searches availability by first class capacity', async () => {
     await request(port, 'POST', '/api/flights', validFlight());
     await request(port, 'POST', '/api/flights', {
