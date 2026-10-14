@@ -20,9 +20,11 @@ class Capacity {
 		}
 	}
 
-	hasSeatsFor(passengers) {
-		return Number.isInteger(passengers) && passengers > 0
-			&& this.economy >= passengers;
+	hasSeatsFor(passengers, cabinClass = 'economy') {
+		if (!Number.isInteger(passengers) || passengers < 1) return false;
+		if (cabinClass === 'firstClass') return this.firstClass >= passengers;
+		if (cabinClass === 'all') return this.economy >= passengers || this.firstClass >= passengers;
+		return this.economy >= passengers;
 	}
 }
 

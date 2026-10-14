@@ -70,6 +70,26 @@ describe('Flight REST API with Express', () => {
     expect(response.body[0].flightNumber).toBe('AR1234');
   });
 
+  test('searches availability by first class capacity', async () => {
+    await request(port, 'POST', '/api/flights', validFlight());
+    await request(port, 'POST', '/api/flights', {
+      ...validFlight(), flightNumber: 'AR5678', capacity: { economy: 180, firstClass: 2 }
+    });
+
+    const response = await request(port, 'GET', '/api/flights/search?cabinClass=firstClass&passengers=5');
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0].flightNumber).toBe('AR1234');
+  });
+
+  test('rejects dates that do not exist in the calendar', async () => {
+    const response = await request(port, 'GET', '/api/flights/search?date=2099-02-31');
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBe('date must be a real calendar date');
+  });
+
   test('search excludes cancelled flights and unavailable dates', async () => {
     const created = await request(port, 'POST', '/api/flights', validFlight());
     await request(port, 'DELETE', `/api/flights/${created.body.id}`);

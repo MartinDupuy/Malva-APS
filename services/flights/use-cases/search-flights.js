@@ -15,18 +15,24 @@ class SearchFlights {
     const passengers = criteria.passengers === undefined ? 1 : Number(criteria.passengers);
     const fare = criteria.maxFare ?? criteria.tariff;
     const maxFare = fare === undefined ? null : Number(fare);
+    const cabinClass = criteria.cabinClass || 'all';
     if (!Number.isInteger(passengers) || passengers < 1) {
       throw new Error('passengers must be a positive integer');
     }
     if (maxFare !== null && (!Number.isFinite(maxFare) || maxFare < 0)) {
       throw new Error('maxFare must be a non-negative number');
     }
+    if (!['all', 'economy', 'firstClass'].includes(cabinClass)) {
+      throw new Error('cabinClass must be all, economy or firstClass');
+    }
+    if (criteria.date) this._validateDate(criteria.date);
     return {
       ...criteria,
       originAirport: criteria.originAirport || criteria.origin,
       destinationAirport: criteria.destinationAirport || criteria.destination,
       passengers,
-      maxFare
+      maxFare,
+      cabinClass
     };
   }
 
@@ -34,8 +40,8 @@ class SearchFlights {
     return flight.status === 'ACTIVE'
       && this._matchesRoute(flight, criteria)
       && this._matchesDate(flight, criteria.date)
-      && flight.capacity.hasSeatsFor(criteria.passengers)
-      && this._matchesFare(flight, criteria.maxFare);
+      && flight.capacity.hasSeatsFor(criteria.passengers, criteria.cabinClass)
+      && this._matchesFare(flight, criteria.maxFare, criteria.cabinClass);
   }
 
   _matchesRoute(flight, criteria) {
@@ -45,7 +51,7 @@ class SearchFlights {
 
   _matchesDate(flight, date) {
     if (!date) return true;
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error('date must use YYYY-MM-DD format');
+    this._validateDate(date);
     return date >= this._dateValue(flight.availabilityPeriod.startDate)
       && date <= this._dateValue(flight.availabilityPeriod.endDate)
       && flight.operatingDays.includes(DAY_CODES[new Date(`${date}T00:00:00Z`).getUTCDay()]);
@@ -55,8 +61,24 @@ class SearchFlights {
     return date.toISOString().slice(0, 10);
   }
 
-  _matchesFare(flight, maxFare) {
-    return maxFare === null || flight.pricing.economy.amount / 100 <= maxFare;
+  _validateDate(date) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error('date must use YYYY-MM-DD format');
+    const parsed = new Date(`${date}T00:00:00Z`);
+    if (Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== date) {
+      throw new Error('date must be a real calendar date');
+    }
+  }
+
+  _matchesFare(flight, maxFare, cabinClass) {
+    if (maxFare === null) return true;
+    const prices = cabinClass === 'firstClass'
+      ? [flight.pricing.firstClass]
+      : cabinClass === 'economy' ? [flight.pricing.economy] : [flight.pricing.economy, flight.pricing.firstClass];
+    return prices.some(price => this._priceInUnits(price) <= maxFare);
+  }
+
+  _priceInUnits(price) {
+    return price.amount / 100;
   }
 }
 

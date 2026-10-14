@@ -1,10 +1,11 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AdminFlightsPage } from './pages/AdminFlightsPage';
+import { PassengerSearchPage } from './pages/PassengerSearchPage';
 import './styles.css';
+import './components/passenger/passenger-results.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AdminFlightsPage />
+    <PassengerSearchPage />
   </StrictMode>,
 );
