@@ -53,7 +53,7 @@ Historial de commits realizados durante la implementación de User Stories.
 - **Resultado de tests:** Exitoso (67 tests pasando en 8 suites).
 
 ### Commit 6: `feat(notifications): implement SMTP email sender adapter`
-- **Hash:** `1139fac`
+- **Hash:** `b4fa8ac`
 - **Fecha:** 2026-10-14
 - **Archivos creados/modificados:**
   - `package.json`: Agregada dependencia `nodemailer` (^6.10.1).
@@ -62,3 +62,12 @@ Historial de commits realizados durante la implementación de User Stories.
   - `tests/notifications/SmtpEmailSender.test.js`: Suite de pruebas unitarias con mock de `nodemailer`, validando configuración del transporte, parámetros correctos en `sendMail` (`to`, `subject`, `html`, `attachments`), mapeo de adjuntos, retorno de `{ success: true, messageId }` y propagación de errores SMTP.
   - `docs/plans/us/plan-emision-facturacion.md`: Marcado de commit 6 como completado.
 - **Resultado de tests:** Exitoso (73 tests pasando en 9 suites).
+
+### Commit 7: `feat(checkout): add CheckoutResult value object`
+- **Hash:** `89a7713`
+- **Fecha:** 2026-10-14
+- **Archivos creados/modificados:**
+  - `services/checkout/domain/CheckoutResult.js`: Value object inmutable que encapsula el resultado completo del flujo de compra y checkout. Campos: `bookingId`, `paymentResult`, `ticketPdf`, `invoicePdf`, `emailSent`, `emailError`. Provee static factories `success()`, `paymentFailed()`, y `withEmailResult()` para inmutabilidad sin efectos colaterales, además de validación de campos requeridos y `Object.freeze`.
+  - `tests/checkout/CheckoutResult.test.js`: Suite de pruebas unitarias cubriendo las fábricas estáticas `success`, `paymentFailed`, actualización inmutable con `withEmailResult`, validación de campos obligatorios y garantía de inmutabilidad estricta.
+  - `docs/plans/us/plan-emision-facturacion.md`: Marcado de commit 7 como completado.
+- **Resultado de tests:** Exitoso (82 tests pasando en 10 suites).

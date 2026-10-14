@@ -150,7 +150,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el Sprin
 
 ---
 
-### Commit 7 — `feat(checkout): add CheckoutResult value object` *(0.5 h)*
+### Commit 7 — `feat(checkout): add CheckoutResult value object` *(0.5 h)* — ✅ COMPLETADO
 
 **Qué se hace:**
 - Crear `services/checkout/domain/CheckoutResult.js`: value object inmutable que encapsula el resultado completo del checkout. Campos: `bookingId`, `paymentResult` (el `PaymentResult` existente), `ticketPdf` (Buffer o null), `invoicePdf` (Buffer o null), `emailSent` (boolean), `emailError` (string o null). Factory methods estáticos:
@@ -228,7 +228,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el Sprin
 | 4 | ✅ Completado | `feat(ticketing): implement PDF ticket generator adapter` | `services/ticketing/adapters/PdfTicketGenerator.js`, `package.json` (+pdfkit) | `tests/ticketing/PdfTicketGenerator.test.js` |
 | 5 | ✅ Completado | `feat(billing): implement PDF invoice generator adapter` | `services/billing/adapters/PdfInvoiceGenerator.js` | `tests/billing/PdfInvoiceGenerator.test.js` |
 | 6 | ✅ Completado | `feat(notifications): implement SMTP email sender adapter` | `services/notifications/adapters/SmtpEmailSender.js`, `package.json` (+nodemailer), `.env.example` | `tests/notifications/SmtpEmailSender.test.js` |
-| 7 | ⏳ Pendiente | `feat(checkout): add CheckoutResult value object` | `services/checkout/domain/CheckoutResult.js` | `tests/checkout/CheckoutResult.test.js` |
+| 7 | ✅ Completado | `feat(checkout): add CheckoutResult value object` | `services/checkout/domain/CheckoutResult.js` | `tests/checkout/CheckoutResult.test.js` |
 | 8 | ⏳ Pendiente | `feat(checkout): implement CheckoutService use case` | `services/checkout/domain/CheckoutService.js`, `services/checkout/domain/CheckoutRequest.js` | `tests/checkout/CheckoutService.test.js` |
 | 9 | ⏳ Pendiente | `feat(checkout): add seat release on payment failure` | `services/checkout/domain/SeatReleaser.js`, `services/checkout/domain/CheckoutService.js` (mod) | `tests/checkout/CheckoutService.seatRelease.test.js` |
 | 10 | ⏳ Pendiente | `test(checkout): add integration test for full checkout flow` | `docs/ticketing/checkout-flow.md` | `tests/checkout/CheckoutIntegration.test.js` |
