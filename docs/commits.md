@@ -64,10 +64,20 @@ Historial de commits realizados durante la implementación de User Stories.
 - **Resultado de tests:** Exitoso (73 tests pasando en 9 suites).
 
 ### Commit 7: `feat(checkout): add CheckoutResult value object`
-- **Hash:** `89a7713`
+- **Hash:** `6979b3b`
 - **Fecha:** 2026-10-14
 - **Archivos creados/modificados:**
   - `services/checkout/domain/CheckoutResult.js`: Value object inmutable que encapsula el resultado completo del flujo de compra y checkout. Campos: `bookingId`, `paymentResult`, `ticketPdf`, `invoicePdf`, `emailSent`, `emailError`. Provee static factories `success()`, `paymentFailed()`, y `withEmailResult()` para inmutabilidad sin efectos colaterales, además de validación de campos requeridos y `Object.freeze`.
   - `tests/checkout/CheckoutResult.test.js`: Suite de pruebas unitarias cubriendo las fábricas estáticas `success`, `paymentFailed`, actualización inmutable con `withEmailResult`, validación de campos obligatorios y garantía de inmutabilidad estricta.
   - `docs/plans/us/plan-emision-facturacion.md`: Marcado de commit 7 como completado.
 - **Resultado de tests:** Exitoso (82 tests pasando en 10 suites).
+
+### Commit 8: `feat(checkout): implement CheckoutService use case`
+- **Hash:** `7ce505e`
+- **Fecha:** 2026-10-14
+- **Archivos creados/modificados:**
+  - `services/checkout/domain/CheckoutRequest.js`: Value object que encapsula y valida los datos de entrada para la compra: `bookingId`, `passengerName`, `passengerEmail`, `flightNumber`, `origin`, `destination`, `departureDate`, `departureTime`, `seatNumber`, `cabinClass`, `amount` (`Money`), y `creditCardToken`. Inmutable (`Object.freeze`).
+  - `services/checkout/domain/CheckoutService.js`: Caso de uso orquestador hexagonal. Recibe `paymentGateway`, `ticketGenerator`, `invoiceGenerator` y `emailSender`. Orquesta el flujo: (1) procesar pago con pasarela; si no es aprobado retorna `CheckoutResult.paymentFailed`, (2) generar pasaje electrónico PDF, (3) generar factura PDF, (4) despachar email con ambos PDFs adjuntos, registrando cualquier fallo de correo sin revertir el pago aprobado.
+  - `tests/checkout/CheckoutService.test.js`: Suite de pruebas unitarias cubriendo flujos exitosos completos, pagos rechazados, errores transitorios de pasarela, manejo tolerante a fallos de email sin revertir cobro, y validación estricta de parámetros y dependencias.
+  - `docs/plans/us/plan-emision-facturacion.md`: Marcado de commit 8 como completado.
+- **Resultado de tests:** Exitoso (94 tests pasando en 11 suites).

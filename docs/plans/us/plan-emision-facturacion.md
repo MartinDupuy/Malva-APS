@@ -166,7 +166,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el Sprin
 
 ---
 
-### Commit 8 — `feat(checkout): implement CheckoutService use case` *(2.5 h)*
+### Commit 8 — `feat(checkout): implement CheckoutService use case` *(2.5 h)* — ✅ COMPLETADO
 
 **Qué se hace:**
 - Crear `services/checkout/domain/CheckoutService.js`: caso de uso orquestador. Recibe por constructor: `paymentGateway` (puerto existente), `ticketGenerator` (puerto), `invoiceGenerator` (puerto), `emailSender` (puerto).
@@ -229,7 +229,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el Sprin
 | 5 | ✅ Completado | `feat(billing): implement PDF invoice generator adapter` | `services/billing/adapters/PdfInvoiceGenerator.js` | `tests/billing/PdfInvoiceGenerator.test.js` |
 | 6 | ✅ Completado | `feat(notifications): implement SMTP email sender adapter` | `services/notifications/adapters/SmtpEmailSender.js`, `package.json` (+nodemailer), `.env.example` | `tests/notifications/SmtpEmailSender.test.js` |
 | 7 | ✅ Completado | `feat(checkout): add CheckoutResult value object` | `services/checkout/domain/CheckoutResult.js` | `tests/checkout/CheckoutResult.test.js` |
-| 8 | ⏳ Pendiente | `feat(checkout): implement CheckoutService use case` | `services/checkout/domain/CheckoutService.js`, `services/checkout/domain/CheckoutRequest.js` | `tests/checkout/CheckoutService.test.js` |
+| 8 | ✅ Completado | `feat(checkout): implement CheckoutService use case` | `services/checkout/domain/CheckoutService.js`, `services/checkout/domain/CheckoutRequest.js` | `tests/checkout/CheckoutService.test.js` |
 | 9 | ⏳ Pendiente | `feat(checkout): add seat release on payment failure` | `services/checkout/domain/SeatReleaser.js`, `services/checkout/domain/CheckoutService.js` (mod) | `tests/checkout/CheckoutService.seatRelease.test.js` |
 | 10 | ⏳ Pendiente | `test(checkout): add integration test for full checkout flow` | `docs/ticketing/checkout-flow.md` | `tests/checkout/CheckoutIntegration.test.js` |
 
