@@ -41,7 +41,7 @@ function validFlight() {
   return {
     flightNumber: 'AR1234', originAirport: 'EZE', destinationAirport: 'COR',
     departureTime: '10:00', arrivalTime: '22:00', operatingDays: ['MON', 'WED', 'FRI'],
-    availabilityPeriod: { startDate: '2026-01-01', endDate: '2026-12-31' },
+    availabilityPeriod: { startDate: '2099-01-01', endDate: '2099-12-31' },
     capacity: { economy: 180, firstClass: 12 },
     pricing: { economy: 85000.50, firstClass: 180000.00 }
   };
@@ -79,12 +79,12 @@ describe('Flight REST API', () => {
     });
 
     expect(response.status).toBe(400);
-    expect(response.body.error).toMatch(/Operating days/);
+    expect(response.body.error).toMatch(/no es un formato válido/);
   });
 
   test.each([
-    ['invalid date range', { availabilityPeriod: { startDate: '2027-01-01', endDate: '2026-01-01' } }, /availabilityPeriod/],
-    ['invalid economy capacity', { capacity: { economy: -1, firstClass: 12 } }, /economy capacity/],
+    ['invalid date range', { availabilityPeriod: { startDate: '2099-06-01', endDate: '2099-01-01' } }, /fecha de fin/],
+    ['invalid economy capacity', { capacity: { economy: -1, firstClass: 12 } }, /capacidad de Economy/],
     ['invalid first class price', { pricing: { economy: 85000, firstClass: -1 } }, /firstClass price/]
   ])('returns bad request for %s', async (name, changes, errorPattern) => {
     const response = await sendRequest(port, 'POST', '/api/flights', {

@@ -10,12 +10,30 @@ class UpdateFlight {
     if (!currentFlight) {
       throw new Error('Flight not found');
     }
-    const flight = new Flight({ ...currentFlight, ...changes, id: flightId });
+    const currentData = this._toFlightData(currentFlight);
+    const flight = new Flight({ ...currentData, ...changes, id: flightId });
     const duplicate = await this.flightRepository.findByFlightNumber(flight.flightNumber);
     if (duplicate && duplicate.id !== flightId) {
       throw new Error('flightNumber already exists');
     }
     return this.flightRepository.update(flightId, flight);
+  }
+
+  _toFlightData(flight) {
+    return {
+      ...flight,
+      operatingDays: flight.operatingDays,
+      availabilityPeriod: this._periodData(flight.availabilityPeriod),
+      capacity: { economy: flight.capacity.economy, firstClass: flight.capacity.firstClass },
+      pricing: { economy: flight.pricing.economy, firstClass: flight.pricing.firstClass }
+    };
+  }
+
+  _periodData(period) {
+    return {
+      startDate: period.startDate.toISOString().slice(0, 10),
+      endDate: period.endDate.toISOString().slice(0, 10)
+    };
   }
 }
 

@@ -1,20 +1,24 @@
 const VALID_DAYS = new Set(['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']);
 
 class OperatingDays {
-	constructor(days) {
-		if (!Array.isArray(days) || days.length === 0) {
-			throw new Error('Operating days must contain at least one day');
+	constructor(daysArray) {
+		if (!Array.isArray(daysArray) || daysArray.length === 0) {
+			throw new Error('Debe proveer al menos un día de operación válido.');
 		}
-		const uniqueDays = [...new Set(days)];
-			if (uniqueDays.some(day => !VALID_DAYS.has(day))) {
-				throw new Error('Operating days must use MON, TUE, WED, THU, FRI, SAT or SUN');
+		const uniqueDays = new Set(daysArray);
+		if (uniqueDays.size !== daysArray.length) {
+			throw new Error('La lista de días de operación contiene elementos duplicados.');
 		}
-			this.values = Object.freeze(uniqueDays);
-		Object.freeze(this);
+		for (const day of daysArray) {
+			if (!VALID_DAYS.has(day)) {
+				throw new Error(`El día ${day} no es un formato válido. Use MON, TUE, etc.`);
+			}
+		}
+		this.days = daysArray;
 	}
 
 	includes(day) {
-		return this.values.includes(day);
+		return this.days.includes(day);
 	}
 }
 

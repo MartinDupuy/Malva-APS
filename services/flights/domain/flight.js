@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const FlightNumber = require('./flight-number');
 const Capacity = require('./capacity');
 const OperatingDays = require('./operating-days');
+const AvailabilityPeriod = require('./availability-period');
 const Pricing = require('./pricing');
 
 class Flight {
@@ -13,10 +14,12 @@ class Flight {
 		this._validateRoute();
 		this.departureTime = this._requiredText(data.departureTime, 'departureTime');
 		this.arrivalTime = this._requiredText(data.arrivalTime, 'arrivalTime');
-		this.operatingDays = new OperatingDays(data.operatingDays).values;
-		this.availabilityPeriod = this._availabilityPeriod(data.availabilityPeriod);
-		this._validateDateRange();
-		this.capacity = new Capacity(data.capacity);
+		this.operatingDays = new OperatingDays(data.operatingDays).days;
+		this.availabilityPeriod = new AvailabilityPeriod(
+			data.availabilityPeriod?.startDate,
+			data.availabilityPeriod?.endDate
+		);
+		this.capacity = new Capacity(data.capacity?.economy, data.capacity?.firstClass);
 		this.pricing = new Pricing(data.pricing);
 		this.status = data.status || 'ACTIVE';
 		this._validateStatus();
@@ -32,30 +35,6 @@ class Flight {
 	_validateRoute() {
 		if (this.originAirport.toUpperCase() === this.destinationAirport.toUpperCase()) {
 			throw new Error('originAirport and destinationAirport must be different');
-		}
-	}
-
-	_availabilityPeriod(period = {}) {
-		return {
-			startDate: this._date(period.startDate, 'availabilityPeriod.startDate'),
-			endDate: this._date(period.endDate, 'availabilityPeriod.endDate')
-		};
-	}
-
-	_date(value, field) {
-		if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-			throw new Error(`${field} must use YYYY-MM-DD format`);
-		}
-		const parsed = new Date(`${value}T00:00:00Z`);
-		if (Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== value) {
-			throw new Error(`${field} must be a valid date`);
-		}
-		return value;
-	}
-
-	_validateDateRange() {
-		if (this.availabilityPeriod.startDate > this.availabilityPeriod.endDate) {
-			throw new Error('availabilityPeriod.startDate must be before or equal to endDate');
 		}
 	}
 

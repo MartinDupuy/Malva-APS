@@ -1,17 +1,22 @@
-const CABIN_CLASSES = ['economy', 'firstClass'];
-
 class Capacity {
-	constructor(values = {}) {
-		this.economy = this._validate(values.economy, 'economy');
-		this.firstClass = this._validate(values.firstClass, 'firstClass');
-		Object.freeze(this);
+	constructor(economy, firstClass) {
+		this.validate(economy, 'Economy');
+		this.validate(firstClass, 'Primera Clase');
+		this.economy = economy;
+		this.firstClass = firstClass;
+		this.total = economy + firstClass;
 	}
 
-	_validate(value, cabinClass) {
-		if (!Number.isInteger(value) || value < 0) {
-			throw new Error(`${cabinClass} capacity must be a non-negative integer`);
+	validate(value, className) {
+		if (typeof value !== 'number' || Number.isNaN(value)) {
+			throw new Error(`La capacidad de ${className} debe ser un número.`);
 		}
-		return value;
+		if (!Number.isInteger(value)) {
+			throw new Error(`La capacidad de ${className} no puede tener decimales.`);
+		}
+		if (value < 0) {
+			throw new Error(`La capacidad de ${className} no puede ser negativa.`);
+		}
 	}
 
 	hasSeatsFor(passengers) {
@@ -21,4 +26,3 @@ class Capacity {
 }
 
 module.exports = Capacity;
-module.exports.CABIN_CLASSES = CABIN_CLASSES;
