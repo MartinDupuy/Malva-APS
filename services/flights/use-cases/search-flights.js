@@ -12,11 +12,12 @@ class SearchFlights {
   }
 
   _normalizeCriteria(criteria) {
-    const passengers = criteria.passengers === undefined ? 1 : Number(criteria.passengers);
+    const hasPassengerFilter = criteria.passengers !== undefined && criteria.passengers !== '';
+    const passengers = hasPassengerFilter ? Number(criteria.passengers) : null;
     const fare = criteria.maxFare ?? criteria.tariff;
     const maxFare = fare === undefined ? null : Number(fare);
     const cabinClass = criteria.cabinClass || 'all';
-    if (!Number.isInteger(passengers) || passengers < 1) {
+    if (hasPassengerFilter && (!Number.isInteger(passengers) || passengers < 1)) {
       throw new Error('passengers must be a positive integer');
     }
     if (maxFare !== null && (!Number.isFinite(maxFare) || maxFare < 0)) {
@@ -40,7 +41,7 @@ class SearchFlights {
     return flight.status === 'ACTIVE'
       && this._matchesRoute(flight, criteria)
       && this._matchesDate(flight, criteria.date)
-      && flight.capacity.hasSeatsFor(criteria.passengers, criteria.cabinClass)
+      && this._matchesCapacity(flight, criteria)
       && this._matchesFare(flight, criteria.maxFare, criteria.cabinClass);
   }
 
@@ -75,6 +76,11 @@ class SearchFlights {
       ? [flight.pricing.firstClass]
       : cabinClass === 'economy' ? [flight.pricing.economy] : [flight.pricing.economy, flight.pricing.firstClass];
     return prices.some(price => this._priceInUnits(price) <= maxFare);
+  }
+
+  _matchesCapacity(flight, criteria) {
+    return criteria.passengers === null
+      || flight.capacity.hasSeatsFor(criteria.passengers, criteria.cabinClass);
   }
 
   _priceInUnits(price) {

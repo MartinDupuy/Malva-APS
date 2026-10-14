@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 const INITIAL_CRITERIA = {
-  origin: '', destination: '', date: '', passengers: 1, tariff: '', cabinClass: 'all'
+  origin: '', destination: '', date: '', passengers: '', tariff: '', cabinClass: ''
 };
 
 export function SearchForm({ onSearch }) {
@@ -13,7 +13,12 @@ export function SearchForm({ onSearch }) {
 
   const submit = event => {
     event.preventDefault();
-    onSearch({ ...criteria, passengers: Number(criteria.passengers) });
+    const searchCriteria = { ...criteria };
+    if (searchCriteria.passengers) searchCriteria.passengers = Number(searchCriteria.passengers);
+    else delete searchCriteria.passengers;
+    if (!searchCriteria.cabinClass) delete searchCriteria.cabinClass;
+    if (!searchCriteria.tariff) delete searchCriteria.tariff;
+    onSearch(searchCriteria);
   };
 
   return <form className="passenger-search-form expanded-search-form" onSubmit={submit}>

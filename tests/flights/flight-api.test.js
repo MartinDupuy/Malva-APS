@@ -57,6 +57,28 @@ describe('Flight REST API with Express', () => {
     expect(response.body).toHaveLength(1);
   });
 
+  test('returns active flights when search has no filters', async () => {
+    await request(port, 'POST', '/api/flights', validFlight());
+
+    const response = await request(port, 'GET', '/api/flights/search');
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0].flightNumber).toBe('AR1234');
+  });
+
+  test('returns all active flights when no search criteria are provided', async () => {
+    await request(port, 'POST', '/api/flights', {
+      ...validFlight(), flightNumber: 'AR5678', capacity: { economy: 0, firstClass: 0 }
+    });
+
+    const response = await request(port, 'GET', '/api/flights/search');
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0].flightNumber).toBe('AR5678');
+  });
+
   test('searches active flights by route, passengers and tariff', async () => {
     await request(port, 'POST', '/api/flights', validFlight());
     await request(port, 'POST', '/api/flights', {
