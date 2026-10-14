@@ -63,30 +63,81 @@ El sistema está diseñado bajo una arquitectura de **Monolito Modular Stateless
 
 ## ⚙️ Instalación y Configuración
 
-1. **Clone the repository:**
-   ```bash
-   git clone <repository-url>
-   cd Malva-APS
-   ```
+### Requisitos
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+- Node.js y npm instalados.
+- No se requiere una base de datos para ejecutar el módulo actual de vuelos: utiliza un repositorio en memoria.
 
-3. **Environment variables:**
-   Copy the example environment file and fill in the necessary variables:
-   ```bash
-   cp .env.example .env
-   ```
+### Instalación
 
-4. **Run the local development server:**
-   ```bash
-   npm run dev
-   ```
+Desde la raíz del proyecto:
 
-5. **Run tests and linting:**
-   ```bash
-   npm test
-   npm run lint
-   ```
+```bash
+npm install
+```
+
+Las variables de SMTP del archivo `.env.example` solo son necesarias para los módulos de notificaciones. La API de vuelos funciona sin configuración adicional.
+
+### Levantar el backend
+
+En una terminal:
+
+```bash
+npm start
+```
+
+La API Express queda disponible en `http://localhost:3000`.
+
+### Levantar el frontend
+
+En una segunda terminal:
+
+```bash
+npm run dev
+```
+
+La interfaz Vite queda disponible en `http://localhost:5173` y redirige las llamadas `/api` al backend.
+
+### Endpoints principales
+
+```text
+POST   /api/flights
+GET    /api/flights
+GET    /api/flights/search
+PUT    /api/flights/:id
+DELETE /api/flights/:id
+```
+
+Ejemplo de búsqueda:
+
+```bash
+curl "http://localhost:3000/api/flights/search?origin=EZE&destination=COR&date=2099-01-01&passengers=2&cabinClass=economy&tariff=100000"
+```
+
+Para listar todos los vuelos activos sin filtros:
+
+```bash
+curl "http://localhost:3000/api/flights/search"
+```
+
+### Pruebas y build
+
+Ejecutar las pruebas:
+
+```bash
+npm test -- --runInBand
+```
+
+Generar el build de producción del frontend:
+
+```bash
+npm run build
+```
+
+Previsualizar el build:
+
+```bash
+npm run preview
+```
+
+La persistencia actual es temporal: los vuelos almacenados en memoria se pierden al reiniciar el backend.
