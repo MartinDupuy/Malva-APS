@@ -20,7 +20,7 @@ class Flight {
 			data.availabilityPeriod?.endDate
 		);
 		this.capacity = new Capacity(data.capacity?.economy, data.capacity?.firstClass);
-		this.pricing = new Pricing(data.pricing);
+		this.pricing = new Pricing(data.pricing, data.currency || 'USD');
 		this.status = data.status || 'ACTIVE';
 		this._validateStatus();
 	}

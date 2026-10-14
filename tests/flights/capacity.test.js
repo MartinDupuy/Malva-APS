@@ -9,6 +9,13 @@ describe('Capacity', () => {
     expect(capacity.total).toBe(170);
   });
 
+  test('cannot be mutated after construction', () => {
+    const capacity = new Capacity(150, 20);
+
+    capacity.economy = 1;
+    expect(capacity.economy).toBe(150);
+  });
+
   test.each([
     [null, 20, 'Economy', 'debe ser un número'],
     [10.5, 20, 'Economy', 'no puede tener decimales'],

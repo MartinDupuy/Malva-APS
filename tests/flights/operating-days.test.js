@@ -7,6 +7,15 @@ describe('OperatingDays', () => {
     expect(operatingDays.days).toHaveLength(7);
   });
 
+  test('copies and freezes the input days', () => {
+    const input = ['MON', 'WED'];
+    const operatingDays = new OperatingDays(input);
+    input.push('FRI');
+
+    expect(operatingDays.days).toEqual(['MON', 'WED']);
+    expect(() => operatingDays.days.push('FRI')).toThrow();
+  });
+
   test.each([
     [[], 'al menos un día'],
     [['MON', 'MON'], 'duplicados'],

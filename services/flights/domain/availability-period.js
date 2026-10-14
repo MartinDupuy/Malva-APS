@@ -4,9 +4,12 @@ class AvailabilityPeriod {
     if (!regex.test(startDateStr) || !regex.test(endDateStr)) {
       throw new Error('Las fechas deben tener el formato YYYY-MM-DD.');
     }
-    this.startDate = this._parseDate(startDateStr);
-    this.endDate = this._parseDate(endDateStr);
+    this._startDate = startDateStr;
+    this._endDate = endDateStr;
+    this._parseDate(startDateStr);
+    this._parseDate(endDateStr);
     this.validateDates();
+    Object.freeze(this);
   }
 
   _parseDate(dateString) {
@@ -26,6 +29,14 @@ class AvailabilityPeriod {
     if (this.endDate.getTime() <= this.startDate.getTime()) {
       throw new Error('La fecha de fin debe ser posterior a la fecha de inicio.');
     }
+  }
+
+  get startDate() {
+    return this._parseDate(this._startDate);
+  }
+
+  get endDate() {
+    return this._parseDate(this._endDate);
   }
 }
 

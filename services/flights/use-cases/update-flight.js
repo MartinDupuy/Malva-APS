@@ -25,7 +25,11 @@ class UpdateFlight {
       operatingDays: flight.operatingDays,
       availabilityPeriod: this._periodData(flight.availabilityPeriod),
       capacity: { economy: flight.capacity.economy, firstClass: flight.capacity.firstClass },
-      pricing: { economy: flight.pricing.economy, firstClass: flight.pricing.firstClass }
+      pricing: {
+        economy: flight.pricing.economy,
+        firstClass: flight.pricing.firstClass
+      },
+      currency: flight.pricing.economy.currency
     };
   }
 

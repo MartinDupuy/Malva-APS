@@ -14,7 +14,8 @@ class OperatingDays {
 				throw new Error(`El día ${day} no es un formato válido. Use MON, TUE, etc.`);
 			}
 		}
-		this.days = daysArray;
+		this.days = Object.freeze([...daysArray]);
+		Object.freeze(this);
 	}
 
 	includes(day) {

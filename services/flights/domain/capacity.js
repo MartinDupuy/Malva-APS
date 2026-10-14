@@ -5,6 +5,7 @@ class Capacity {
 		this.economy = economy;
 		this.firstClass = firstClass;
 		this.total = economy + firstClass;
+		Object.freeze(this);
 	}
 
 	validate(value, className) {
