@@ -1,10 +1,10 @@
 const http = require('http');
-const FlightRepository = require('./services/flights/adapters/flight-repository');
+const InMemoryFlightRepository = require('./services/flights/adapters/in-memory-flight-repository');
 const FlightController = require('./services/flights/adapters/flight-controller');
 const { createRouter } = require('./infra/http-router');
 
 function createServer() {
-  const flightRepository = new FlightRepository();
+  const flightRepository = createFlightRepository(process.env.FLIGHT_REPOSITORY || 'memory');
   const flightController = new FlightController(flightRepository);
   const routes = [
     { method: 'POST', path: '/api/flights', handler: flightController.create.bind(flightController) },
@@ -14,6 +14,11 @@ function createServer() {
   ];
   const router = createRouter(routes);
   return http.createServer(router);
+}
+
+function createFlightRepository(repositoryType) {
+  if (repositoryType === 'memory') return new InMemoryFlightRepository();
+  throw new Error(`Unsupported flight repository: ${repositoryType}`);
 }
 
 const server = createServer();

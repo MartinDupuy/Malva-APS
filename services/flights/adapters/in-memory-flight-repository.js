@@ -1,4 +1,4 @@
-class FlightRepository {
+class InMemoryFlightRepository {
   constructor() {
     this.flights = new Map();
   }
@@ -34,4 +34,4 @@ class FlightRepository {
   }
 }
 
-module.exports = FlightRepository;
+module.exports = InMemoryFlightRepository;
