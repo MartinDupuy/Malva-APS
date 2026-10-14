@@ -34,7 +34,7 @@ Historial de commits realizados durante la implementación de User Stories.
 - **Resultado de tests:** Exitoso (57 tests pasando en 6 suites).
 
 ### Commit 4: `feat(ticketing): implement PDF ticket generator adapter`
-- **Hash:** `bfd8a19`
+- **Hash:** `2543c3e`
 - **Fecha:** 2026-10-14
 - **Archivos creados/modificados:**
   - `package.json`: Agregada dependencia `pdfkit` (^0.20.2).
@@ -42,3 +42,12 @@ Historial de commits realizados durante la implementación de User Stories.
   - `tests/ticketing/PdfTicketGenerator.test.js`: Suite de pruebas unitarias que comprueban la generación de un Buffer no vacío, la presencia del magic number `%PDF`, el soporte de caracteres especiales en español (acentos, eñes) sin fallos, el cumplimiento del contrato del puerto `TicketGenerator` y el manejo de error si no se provee el ticket.
   - `docs/plans/us/plan-emision-facturacion.md`: Marcado de commit 4 como completado.
 - **Resultado de tests:** Exitoso (62 tests pasando en 7 suites).
+
+### Commit 5: `feat(billing): implement PDF invoice generator adapter`
+- **Hash:** `3a95484`
+- **Fecha:** 2026-10-14
+- **Archivos creados/modificados:**
+  - `services/billing/adapters/PdfInvoiceGenerator.js`: Adaptador que implementa el puerto `InvoiceGenerator`. Genera facturas en PDF utilizando `pdfkit` retornando un `Buffer`. Incluye encabezado "Factura — Malva Airlines", metadata del comprobante (`invoiceId`, `bookingId`, `issuedAt`, `currency`), datos del cliente (`customerName`, `customerEmail`), tabla detallada de ítems con descripción, cantidad, precio unitario y subtotal, total facturado y pie legal.
+  - `tests/billing/PdfInvoiceGenerator.test.js`: Suite de pruebas unitarias que validan la generación de un `Buffer` no vacío, formato del magic number `%PDF`, soporte de múltiples ítems (pasajes, tasas, equipajes), soporte de caracteres especiales y manejo de excepciones ante inputs nulos.
+  - `docs/plans/us/plan-emision-facturacion.md`: Marcado de commit 5 como completado.
+- **Resultado de tests:** Exitoso (67 tests pasando en 8 suites).

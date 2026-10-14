@@ -123,7 +123,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el Sprin
 
 ---
 
-### Commit 5 — `feat(billing): implement PDF invoice generator adapter` *(1.5 h)*
+### Commit 5 — `feat(billing): implement PDF invoice generator adapter` *(1.5 h)* — ✅ COMPLETADO
 
 **Qué se hace:**
 - Crear `services/billing/adapters/PdfInvoiceGenerator.js`: implementa `InvoiceGenerator`. Usa `pdfkit` para generar una factura PDF. Contenido: encabezado "Factura — Malva Airlines", datos del cliente, tabla de ítems (descripción, cantidad, precio unitario, subtotal), total, moneda, fecha de emisión, número de factura. Retorna un `Buffer`.
@@ -226,7 +226,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el Sprin
 | 2 | ✅ Completado | `feat(billing): add Invoice entity and InvoiceGenerator port` | `services/billing/domain/Invoice.js`, `services/billing/domain/InvoiceGenerator.js` | `tests/billing/Invoice.test.js` |
 | 3 | ✅ Completado | `feat(notifications): add EmailMessage value object and EmailSender port` | `services/notifications/domain/EmailMessage.js`, `services/notifications/domain/EmailSender.js` | `tests/notifications/EmailMessage.test.js` |
 | 4 | ✅ Completado | `feat(ticketing): implement PDF ticket generator adapter` | `services/ticketing/adapters/PdfTicketGenerator.js`, `package.json` (+pdfkit) | `tests/ticketing/PdfTicketGenerator.test.js` |
-| 5 | ⏳ Pendiente | `feat(billing): implement PDF invoice generator adapter` | `services/billing/adapters/PdfInvoiceGenerator.js` | `tests/billing/PdfInvoiceGenerator.test.js` |
+| 5 | ✅ Completado | `feat(billing): implement PDF invoice generator adapter` | `services/billing/adapters/PdfInvoiceGenerator.js` | `tests/billing/PdfInvoiceGenerator.test.js` |
 | 6 | ⏳ Pendiente | `feat(notifications): implement SMTP email sender adapter` | `services/notifications/adapters/SmtpEmailSender.js`, `package.json` (+nodemailer), `.env.example` | `tests/notifications/SmtpEmailSender.test.js` |
 | 7 | ⏳ Pendiente | `feat(checkout): add CheckoutResult value object` | `services/checkout/domain/CheckoutResult.js` | `tests/checkout/CheckoutResult.test.js` |
 | 8 | ⏳ Pendiente | `feat(checkout): implement CheckoutService use case` | `services/checkout/domain/CheckoutService.js`, `services/checkout/domain/CheckoutRequest.js` | `tests/checkout/CheckoutService.test.js` |
