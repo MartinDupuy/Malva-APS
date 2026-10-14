@@ -58,12 +58,15 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el Sprin
 - **OCP:** Nuevos formatos de ticket o factura → nuevo adaptador, sin tocar el caso de uso.
 - **DIP:** El caso de uso depende de abstracciones (puertos), no de implementaciones concretas.
 - **Value Objects inmutables:** `Ticket`, `Invoice`, `EmailMessage`, `CheckoutResult` usan `Object.freeze`.
+- **Test:** Todos los test deben seguir el modelo establecido en el proyecto (mock de dependencias externas, tests de integración con mocks de servicios externos) y deben pasar para que el commit este terminado.
+- **Commits:** Se debe seguir el formato establecido en el proyecto (feat(service): description). Al completarse un commit este debe marcarse como terminado.
+- **Documentation:** Al final de cada commit se debe documentar los cambios realizados en el archivo `docs/commits.md`.
 
 ---
 
 ## Commits
 
-### Commit 1 — `feat(ticketing): add Ticket entity and TicketGenerator port` *(1 h)*
+### Commit 1 — `feat(ticketing): add Ticket entity and TicketGenerator port` *(1 h)* — ✅ COMPLETADO
 
 **Qué se hace:**
 - Crear `services/ticketing/domain/Ticket.js`: entidad inmutable que representa un pasaje electrónico. Campos: `ticketId`, `bookingId`, `passengerName`, `flightNumber`, `origin`, `destination`, `departureDate`, `departureTime`, `seatNumber`, `cabinClass`, `issuedAt`. Se construye validando que todos los campos requeridos estén presentes. `Object.freeze(this)` para inmutabilidad.
@@ -77,7 +80,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el Sprin
 
 ---
 
-### Commit 2 — `feat(billing): add Invoice entity and InvoiceGenerator port` *(1 h)*
+### Commit 2 — `feat(billing): add Invoice entity and InvoiceGenerator port` *(1 h)* — ✅ COMPLETADO
 
 **Qué se hace:**
 - Crear `services/billing/domain/Invoice.js`: entidad inmutable que representa una factura. Campos: `invoiceId`, `bookingId`, `customerName`, `customerEmail`, `items` (array de `{ description, quantity, unitPrice }`), `totalAmount` (value object `Money`), `issuedAt`, `currency`. Valida que `items` no esté vacío, que `totalAmount` sea consistente con la suma de ítems, y que todos los campos requeridos estén presentes. `Object.freeze(this)` (y deep freeze de `items`).
@@ -217,18 +220,18 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el Sprin
 
 ## Resumen de archivos por commit
 
-| # | Commit | Archivos nuevos / modificados | Tests |
-|---|---|---|---|
-| 1 | `feat(ticketing): add Ticket entity and TicketGenerator port` | `services/ticketing/domain/Ticket.js`, `services/ticketing/domain/TicketGenerator.js` | `tests/ticketing/Ticket.test.js` |
-| 2 | `feat(billing): add Invoice entity and InvoiceGenerator port` | `services/billing/domain/Invoice.js`, `services/billing/domain/InvoiceGenerator.js` | `tests/billing/Invoice.test.js` |
-| 3 | `feat(notifications): add EmailMessage value object and EmailSender port` | `services/notifications/domain/EmailMessage.js`, `services/notifications/domain/EmailSender.js` | `tests/notifications/EmailMessage.test.js` |
-| 4 | `feat(ticketing): implement PDF ticket generator adapter` | `services/ticketing/adapters/PdfTicketGenerator.js`, `package.json` (+pdfkit) | `tests/ticketing/PdfTicketGenerator.test.js` |
-| 5 | `feat(billing): implement PDF invoice generator adapter` | `services/billing/adapters/PdfInvoiceGenerator.js` | `tests/billing/PdfInvoiceGenerator.test.js` |
-| 6 | `feat(notifications): implement SMTP email sender adapter` | `services/notifications/adapters/SmtpEmailSender.js`, `package.json` (+nodemailer), `.env.example` | `tests/notifications/SmtpEmailSender.test.js` |
-| 7 | `feat(checkout): add CheckoutResult value object` | `services/checkout/domain/CheckoutResult.js` | `tests/checkout/CheckoutResult.test.js` |
-| 8 | `feat(checkout): implement CheckoutService use case` | `services/checkout/domain/CheckoutService.js`, `services/checkout/domain/CheckoutRequest.js` | `tests/checkout/CheckoutService.test.js` |
-| 9 | `feat(checkout): add seat release on payment failure` | `services/checkout/domain/SeatReleaser.js`, `services/checkout/domain/CheckoutService.js` (mod) | `tests/checkout/CheckoutService.seatRelease.test.js` |
-| 10 | `test(checkout): add integration test for full checkout flow` | `docs/ticketing/checkout-flow.md` | `tests/checkout/CheckoutIntegration.test.js` |
+| # | Estado | Commit | Archivos nuevos / modificados | Tests |
+|---|---|---|---|---|
+| 1 | ✅ Completado | `feat(ticketing): add Ticket entity and TicketGenerator port` | `services/ticketing/domain/Ticket.js`, `services/ticketing/domain/TicketGenerator.js` | `tests/ticketing/Ticket.test.js` |
+| 2 | ✅ Completado | `feat(billing): add Invoice entity and InvoiceGenerator port` | `services/billing/domain/Invoice.js`, `services/billing/domain/InvoiceGenerator.js` | `tests/billing/Invoice.test.js` |
+| 3 | ⏳ Pendiente | `feat(notifications): add EmailMessage value object and EmailSender port` | `services/notifications/domain/EmailMessage.js`, `services/notifications/domain/EmailSender.js` | `tests/notifications/EmailMessage.test.js` |
+| 4 | ⏳ Pendiente | `feat(ticketing): implement PDF ticket generator adapter` | `services/ticketing/adapters/PdfTicketGenerator.js`, `package.json` (+pdfkit) | `tests/ticketing/PdfTicketGenerator.test.js` |
+| 5 | ⏳ Pendiente | `feat(billing): implement PDF invoice generator adapter` | `services/billing/adapters/PdfInvoiceGenerator.js` | `tests/billing/PdfInvoiceGenerator.test.js` |
+| 6 | ⏳ Pendiente | `feat(notifications): implement SMTP email sender adapter` | `services/notifications/adapters/SmtpEmailSender.js`, `package.json` (+nodemailer), `.env.example` | `tests/notifications/SmtpEmailSender.test.js` |
+| 7 | ⏳ Pendiente | `feat(checkout): add CheckoutResult value object` | `services/checkout/domain/CheckoutResult.js` | `tests/checkout/CheckoutResult.test.js` |
+| 8 | ⏳ Pendiente | `feat(checkout): implement CheckoutService use case` | `services/checkout/domain/CheckoutService.js`, `services/checkout/domain/CheckoutRequest.js` | `tests/checkout/CheckoutService.test.js` |
+| 9 | ⏳ Pendiente | `feat(checkout): add seat release on payment failure` | `services/checkout/domain/SeatReleaser.js`, `services/checkout/domain/CheckoutService.js` (mod) | `tests/checkout/CheckoutService.seatRelease.test.js` |
+| 10 | ⏳ Pendiente | `test(checkout): add integration test for full checkout flow` | `docs/ticketing/checkout-flow.md` | `tests/checkout/CheckoutIntegration.test.js` |
 
 ---
 
