@@ -1,3 +1,5 @@
+'use strict';
+
 const Money = require('../../services/payments/domain/Money');
 
 describe('Money Value Object', () => {
