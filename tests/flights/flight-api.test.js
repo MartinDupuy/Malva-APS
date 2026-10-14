@@ -1,5 +1,6 @@
 const http = require('http');
 const { createServer } = require('../../server');
+const { createRouter } = require('../../infra/http-router');
 
 function sendRequest(port, method, path, body) {
   return new Promise((resolve, reject) => {
@@ -18,6 +19,21 @@ function sendRequest(port, method, path, body) {
     });
     request.on('error', reject);
     request.end(body ? JSON.stringify(body) : '');
+  });
+}
+
+function sendRawRequest(port, method, path, body) {
+  return new Promise((resolve, reject) => {
+    const request = http.request({ port, method, path }, response => {
+      let responseBody = '';
+      response.on('data', chunk => { responseBody += chunk; });
+      response.on('end', () => resolve({
+        status: response.statusCode,
+        body: JSON.parse(responseBody)
+      }));
+    });
+    request.on('error', reject);
+    request.end(body);
   });
 }
 
@@ -63,5 +79,44 @@ describe('Flight REST API', () => {
 
     expect(response.status).toBe(400);
     expect(response.body.error).toMatch(/Operating days/);
+  });
+
+  test('returns bad request for malformed JSON', async () => {
+    const response = await sendRawRequest(port, 'POST', '/api/flights', '{invalid');
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBe('Request body must be valid JSON');
+  });
+
+  test('returns payload too large for oversized JSON', async () => {
+    const response = await sendRawRequest(port, 'POST', '/api/flights', 'x'.repeat(1024 * 1024 + 1));
+
+    expect(response.status).toBe(413);
+    expect(response.body.error).toBe('Request body is too large');
+  });
+
+  test('does not parse a body for GET requests', async () => {
+    const response = await sendRawRequest(port, 'GET', '/api/flights', '');
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual([]);
+  });
+
+  test('accepts routes supplied from outside the router', async () => {
+    const handler = jest.fn((request, response) => {
+      response.writeHead(200, { 'Content-Type': 'application/json' });
+      response.end(JSON.stringify({ paymentId: request.params.id }));
+    });
+    const customServer = require('http').createServer(createRouter([
+      { method: 'GET', path: '/api/payments/:id', handler }
+    ]));
+    await new Promise(resolve => customServer.listen(0, resolve));
+    const customPort = customServer.address().port;
+    const response = await sendRawRequest(customPort, 'GET', '/api/payments/pay-1', '');
+    await new Promise(resolve => customServer.close(resolve));
+
+    expect(response.status).toBe(200);
+    expect(response.body.paymentId).toBe('pay-1');
+    expect(handler).toHaveBeenCalledTimes(1);
   });
 });

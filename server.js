@@ -6,7 +6,13 @@ const { createRouter } = require('./infra/http-router');
 function createServer() {
   const flightRepository = new FlightRepository();
   const flightController = new FlightController(flightRepository);
-  const router = createRouter(flightController);
+  const routes = [
+    { method: 'POST', path: '/api/flights', handler: flightController.create.bind(flightController) },
+    { method: 'GET', path: '/api/flights', handler: flightController.list.bind(flightController) },
+    { method: 'PUT', path: '/api/flights/:id', handler: flightController.update.bind(flightController) },
+    { method: 'DELETE', path: '/api/flights/:id', handler: flightController.cancel.bind(flightController) }
+  ];
+  const router = createRouter(routes);
   return http.createServer(router);
 }
 
