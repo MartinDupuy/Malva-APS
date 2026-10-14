@@ -154,40 +154,13 @@ Es la única historia del sprint con código. Diseño: puerto `PaymentGateway`, 
 5. `test(booking): add concurrency tests for simultaneous purchases`
 6. `feat(booking): expose booking endpoints`
 
-### US7 – Emisión de pasajes electrónicos y facturación (12 h)
+### US7 – Pasaje electrónico y facturación
 
-**Rama:** `us/emision-facturacion-pasajes`
-
-**User Story:** Como pasajero, quiero recibir automáticamente por email mi pasaje electrónico y la factura correspondiente, de forma que tenga el comprobante de compra e información de mi vuelo de inmediato.
-
-Diseño: arquitectura hexagonal (puertos y adaptadores), agregando módulos `ticketing`, `billing`, `notifications` y el orquestador `checkout`. La confirmación de compra invoca `PaymentGateway`, genera pasaje y factura PDF, envía el email transaccional y libera asientos si el pago falla.
-
-> Plan detallado completo con arquitectura y contratos disponible en [`docs/plans/plan-emision-facturacion.md`](docs/plans/plan-emision-facturacion.md).
-
-| # | Commit | Pasos / Tests | Horas |
-|---|---|---|---|
-| 1 | `feat(ticketing): add Ticket entity and TicketGenerator port` | Entidad inmutable `Ticket` y puerto abstracto `TicketGenerator`. Tests en `tests/ticketing/Ticket.test.js`. | 1 |
-| 2 | `feat(billing): add Invoice entity and InvoiceGenerator port` | Entidad inmutable `Invoice` y puerto abstracto `InvoiceGenerator`. Tests en `tests/billing/Invoice.test.js`. | 1 |
-| 3 | `feat(notifications): add EmailMessage value object and EmailSender port` | Value object inmutable `EmailMessage` y puerto abstracto `EmailSender`. Tests en `tests/notifications/EmailMessage.test.js`. | 0.5 |
-| 4 | `feat(ticketing): implement PDF ticket generator adapter` | Adaptador `PdfTicketGenerator` usando `pdfkit`. Tests en `tests/ticketing/PdfTicketGenerator.test.js`. | 1.5 |
-| 5 | `feat(billing): implement PDF invoice generator adapter` | Adaptador `PdfInvoiceGenerator` usando `pdfkit`. Tests en `tests/billing/PdfInvoiceGenerator.test.js`. | 1.5 |
-| 6 | `feat(notifications): implement SMTP email sender adapter` | Adaptador `SmtpEmailSender` usando `nodemailer` con config por variables de entorno. Tests en `tests/notifications/SmtpEmailSender.test.js`. | 1.5 |
-| 7 | `feat(checkout): add CheckoutResult value object` | Value object inmutable `CheckoutResult` con factory methods. Tests en `tests/checkout/CheckoutResult.test.js`. | 0.5 |
-| 8 | `feat(checkout): implement CheckoutService use case` | Caso de uso `CheckoutService` y `CheckoutRequest`. Orquesta pago, PDFs y envío de email. Tests en `tests/checkout/CheckoutService.test.js`. | 2.5 |
-| 9 | `feat(checkout): add seat release on payment failure` | Puerto `SeatReleaser` e integración opcional en `CheckoutService` ante pagos rechazados. Tests en `tests/checkout/CheckoutService.seatRelease.test.js`. | 1 |
-| 10 | `test(checkout): add integration test for full checkout flow` | Test de integración E2E con PDFs reales y mocks externos. Diagrama en `docs/ticketing/checkout-flow.md`. Tests en `tests/checkout/CheckoutIntegration.test.js`. | 1 |
-
-**Distribución horaria por tarea:**
-- Conectar flujo de checkout web con API de pagos (Sprint 0): 3 h (commits 7, 8)
-- Confirmación de orden en backend y liberación de asientos ante fallo: 3 h (commits 8, 9)
-- Servicio transaccional de envío de emails con pasaje PDF y factura: 6 h (commits 1, 2, 3, 4, 5, 6, 10)
-- **Total:** 12 h
-
-**Verificación de criterios de aceptación:**
-- Pago completado mediante pasarela integrada: Commits 8 y 10 (`PaymentGateway` con reintentos/fallback).
-- Emisión automática de pasaje y factura tras compra exitosa: Commits 4, 5, 8 y 10.
-- Envío por email de ambos comprobantes: Commits 6, 8 y 10.
-- Pago rechazado o error técnico notificado sin emitir comprobantes y liberando asientos: Commits 8 y 9.
+1. `feat(ticketing): generate electronic ticket document`
+2. `feat(billing): generate invoice document`
+3. `feat(notifications): add email port and adapter`
+4. `feat(ticketing): send ticket and invoice on purchase confirmation`
+5. `test(ticketing): cover email failure with retry`
 
 ### US9 – Notificaciones por cambios de vuelo
 
