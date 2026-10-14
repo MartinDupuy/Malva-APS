@@ -1,21 +1,23 @@
 const CreateFlight = require('../use-cases/create-flight');
 const UpdateFlight = require('../use-cases/update-flight');
 const CancelFlight = require('../use-cases/cancel-flight');
+const SearchFlights = require('../use-cases/search-flights');
 
 class FlightController {
   constructor(flightRepository) {
     this.createFlight = new CreateFlight(flightRepository);
     this.updateFlight = new UpdateFlight(flightRepository);
     this.cancelFlight = new CancelFlight(flightRepository);
+    this.searchFlights = new SearchFlights(flightRepository);
     this.flightRepository = flightRepository;
   }
 
-  async create(request, response, body) {
-    return this._execute(response, 201, () => this.createFlight.execute(body));
+  async create(request, response) {
+    return this._execute(response, 201, () => this.createFlight.execute(request.body));
   }
 
-  async update(request, response, body) {
-    return this._execute(response, 200, () => this.updateFlight.execute(request.params.id, body));
+  async update(request, response) {
+    return this._execute(response, 200, () => this.updateFlight.execute(request.params.id, request.body));
   }
 
   async cancel(request, response) {
@@ -26,20 +28,19 @@ class FlightController {
     return this._execute(response, 200, () => this.flightRepository.findAll());
   }
 
+  async search(request, response) {
+    return this._execute(response, 200, () => this.searchFlights.execute(request.query));
+  }
+
   async _execute(response, successStatus, operation) {
     try {
       const result = await operation();
-      sendJson(response, successStatus, result);
+      response.status(successStatus).json(result);
     } catch (error) {
       const status = error.message === 'Flight not found' ? 404 : 400;
-      sendJson(response, status, { error: error.message });
+      response.status(status).json({ error: error.message });
     }
   }
-}
-
-function sendJson(response, status, body) {
-  response.writeHead(status, { 'Content-Type': 'application/json' });
-  response.end(JSON.stringify(body));
 }
 
 module.exports = FlightController;
