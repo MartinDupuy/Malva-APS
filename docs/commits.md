@@ -73,7 +73,7 @@ Historial de commits realizados durante la implementación de User Stories.
 - **Resultado de tests:** Exitoso (82 tests pasando en 10 suites).
 
 ### Commit 8: `feat(checkout): implement CheckoutService use case`
-- **Hash:** `7ce505e`
+- **Hash:** `9eda611`
 - **Fecha:** 2026-10-14
 - **Archivos creados/modificados:**
   - `services/checkout/domain/CheckoutRequest.js`: Value object que encapsula y valida los datos de entrada para la compra: `bookingId`, `passengerName`, `passengerEmail`, `flightNumber`, `origin`, `destination`, `departureDate`, `departureTime`, `seatNumber`, `cabinClass`, `amount` (`Money`), y `creditCardToken`. Inmutable (`Object.freeze`).
@@ -81,3 +81,13 @@ Historial de commits realizados durante la implementación de User Stories.
   - `tests/checkout/CheckoutService.test.js`: Suite de pruebas unitarias cubriendo flujos exitosos completos, pagos rechazados, errores transitorios de pasarela, manejo tolerante a fallos de email sin revertir cobro, y validación estricta de parámetros y dependencias.
   - `docs/plans/us/plan-emision-facturacion.md`: Marcado de commit 8 como completado.
 - **Resultado de tests:** Exitoso (94 tests pasando en 11 suites).
+
+### Commit 9: `feat(checkout): add seat release on payment failure`
+- **Hash:** `82765ff`
+- **Fecha:** 2026-10-14
+- **Archivos creados/modificados:**
+  - `services/checkout/domain/SeatReleaser.js`: Puerto hexagonal (clase abstracta) con método `async releaseSeats(bookingId) → Promise<void>`.
+  - `services/checkout/domain/CheckoutService.js`: Modificado para inyectar opcionalmente un `SeatReleaser`. Si el pago es rechazado (`REJECTED`), invoca automáticamente la liberación de asientos asociados a la reserva. Si la liberación falla o lanza excepción, captura el error para garantizar resiliencia mientras los asientos expiran por TTL. Si el pago es aprobado, omite la liberación.
+  - `tests/checkout/CheckoutService.seatRelease.test.js`: Suite de pruebas unitarias cubriendo contrato del puerto `SeatReleaser`, llamada exitosa a `releaseSeats` en rechazo, comportamiento sin releaser inyectado, manejo seguro ante fallos en el servicio de asientos y ausencia de liberación en pagos aprobados.
+  - `docs/plans/us/plan-emision-facturacion.md`: Marcado de commit 9 como completado.
+- **Resultado de tests:** Exitoso (99 tests pasando en 12 suites).

@@ -189,7 +189,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el Sprin
 
 ---
 
-### Commit 9 — `feat(checkout): add seat release on payment failure` *(1 h)*
+### Commit 9 — `feat(checkout): add seat release on payment failure` *(1 h)* — ✅ COMPLETADO
 
 **Qué se hace:**
 - Crear `services/checkout/domain/SeatReleaser.js`: puerto con método `async releaseSeats(bookingId) → Promise<void>`. Lanza `Error('Method not implemented.')`. Este puerto será implementado en la US de reservas (US5) cuando se tenga la base de datos; por ahora se define el contrato.
@@ -230,7 +230,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el Sprin
 | 6 | ✅ Completado | `feat(notifications): implement SMTP email sender adapter` | `services/notifications/adapters/SmtpEmailSender.js`, `package.json` (+nodemailer), `.env.example` | `tests/notifications/SmtpEmailSender.test.js` |
 | 7 | ✅ Completado | `feat(checkout): add CheckoutResult value object` | `services/checkout/domain/CheckoutResult.js` | `tests/checkout/CheckoutResult.test.js` |
 | 8 | ✅ Completado | `feat(checkout): implement CheckoutService use case` | `services/checkout/domain/CheckoutService.js`, `services/checkout/domain/CheckoutRequest.js` | `tests/checkout/CheckoutService.test.js` |
-| 9 | ⏳ Pendiente | `feat(checkout): add seat release on payment failure` | `services/checkout/domain/SeatReleaser.js`, `services/checkout/domain/CheckoutService.js` (mod) | `tests/checkout/CheckoutService.seatRelease.test.js` |
+| 9 | ✅ Completado | `feat(checkout): add seat release on payment failure` | `services/checkout/domain/SeatReleaser.js`, `services/checkout/domain/CheckoutService.js` (mod) | `tests/checkout/CheckoutService.seatRelease.test.js` |
 | 10 | ⏳ Pendiente | `test(checkout): add integration test for full checkout flow` | `docs/ticketing/checkout-flow.md` | `tests/checkout/CheckoutIntegration.test.js` |
 
 ---

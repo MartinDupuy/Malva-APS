@@ -13,7 +13,13 @@ class CheckoutService {
    * @param {Object} [invoiceGenerator]
    * @param {Object} [emailSender]
    */
-  constructor(paymentGatewayOrOptions, ticketGenerator, invoiceGenerator, emailSender) {
+  constructor(
+    paymentGatewayOrOptions,
+    ticketGenerator,
+    invoiceGenerator,
+    emailSender,
+    seatReleaser = null
+  ) {
     if (
       paymentGatewayOrOptions &&
       typeof paymentGatewayOrOptions === 'object' &&
@@ -23,11 +29,13 @@ class CheckoutService {
       this.ticketGenerator = paymentGatewayOrOptions.ticketGenerator;
       this.invoiceGenerator = paymentGatewayOrOptions.invoiceGenerator;
       this.emailSender = paymentGatewayOrOptions.emailSender;
+      this.seatReleaser = paymentGatewayOrOptions.seatReleaser || null;
     } else {
       this.paymentGateway = paymentGatewayOrOptions;
       this.ticketGenerator = ticketGenerator;
       this.invoiceGenerator = invoiceGenerator;
       this.emailSender = emailSender;
+      this.seatReleaser = seatReleaser || null;
     }
 
     if (
@@ -62,6 +70,23 @@ class CheckoutService {
     const paymentResult = await this.paymentGateway.processPayment(paymentRequest);
 
     if (!paymentResult || !paymentResult.isApproved()) {
+      if (
+        paymentResult &&
+        typeof paymentResult.isRejected === 'function' &&
+        paymentResult.isRejected() &&
+        this.seatReleaser &&
+        typeof this.seatReleaser.releaseSeats === 'function'
+      ) {
+        try {
+          await this.seatReleaser.releaseSeats(checkoutRequest.bookingId);
+        } catch (releaseError) {
+          console.error(
+            `Failed to release seats for booking ${checkoutRequest.bookingId}:`,
+            releaseError
+          );
+        }
+      }
+
       return CheckoutResult.paymentFailed(checkoutRequest.bookingId, paymentResult);
     }
 
