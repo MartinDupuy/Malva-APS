@@ -9,7 +9,10 @@
   },
   "scripts": {
     "test": "jest",
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "vite --config frontend/vite.config.js",
+    "build": "vite build --config frontend/vite.config.js",
+    "preview": "vite preview --config frontend/vite.config.js"
   },
   "repository": {
     "type": "git",
@@ -24,10 +27,14 @@
   },
   "homepage": "https://github.com/MartinDupuy/Malva-APS#readme",
   "devDependencies": {
-    "jest": "^30.5.2"
+    "@vitejs/plugin-react": "^4.3.4",
+    "jest": "^30.5.2",
+    "vite": "^6.4.1"
   },
   "dependencies": {
     "nodemailer": "^10.1.1",
-    "pdfkit": "^0.20.2"
+    "pdfkit": "^0.20.2",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
   }
 }
