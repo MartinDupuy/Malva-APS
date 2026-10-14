@@ -135,7 +135,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el Sprin
 
 ---
 
-### Commit 6 — `feat(notifications): implement SMTP email sender adapter` *(1.5 h)*
+### Commit 6 — `feat(notifications): implement SMTP email sender adapter` *(1.5 h)* — ✅ COMPLETADO
 
 **Qué se hace:**
 - Crear `services/notifications/adapters/SmtpEmailSender.js`: implementa `EmailSender`. Usa `nodemailer` con configuración por variables de entorno (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`). El método `send()` construye el mensaje con los adjuntos y lo envía vía SMTP. Retorna `{ success: true, messageId }` en éxito. En error de red, lanza la excepción para que la capa superior pueda reintentar.
@@ -227,7 +227,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el Sprin
 | 3 | ✅ Completado | `feat(notifications): add EmailMessage value object and EmailSender port` | `services/notifications/domain/EmailMessage.js`, `services/notifications/domain/EmailSender.js` | `tests/notifications/EmailMessage.test.js` |
 | 4 | ✅ Completado | `feat(ticketing): implement PDF ticket generator adapter` | `services/ticketing/adapters/PdfTicketGenerator.js`, `package.json` (+pdfkit) | `tests/ticketing/PdfTicketGenerator.test.js` |
 | 5 | ✅ Completado | `feat(billing): implement PDF invoice generator adapter` | `services/billing/adapters/PdfInvoiceGenerator.js` | `tests/billing/PdfInvoiceGenerator.test.js` |
-| 6 | ⏳ Pendiente | `feat(notifications): implement SMTP email sender adapter` | `services/notifications/adapters/SmtpEmailSender.js`, `package.json` (+nodemailer), `.env.example` | `tests/notifications/SmtpEmailSender.test.js` |
+| 6 | ✅ Completado | `feat(notifications): implement SMTP email sender adapter` | `services/notifications/adapters/SmtpEmailSender.js`, `package.json` (+nodemailer), `.env.example` | `tests/notifications/SmtpEmailSender.test.js` |
 | 7 | ⏳ Pendiente | `feat(checkout): add CheckoutResult value object` | `services/checkout/domain/CheckoutResult.js` | `tests/checkout/CheckoutResult.test.js` |
 | 8 | ⏳ Pendiente | `feat(checkout): implement CheckoutService use case` | `services/checkout/domain/CheckoutService.js`, `services/checkout/domain/CheckoutRequest.js` | `tests/checkout/CheckoutService.test.js` |
 | 9 | ⏳ Pendiente | `feat(checkout): add seat release on payment failure` | `services/checkout/domain/SeatReleaser.js`, `services/checkout/domain/CheckoutService.js` (mod) | `tests/checkout/CheckoutService.seatRelease.test.js` |

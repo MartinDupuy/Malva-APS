@@ -44,10 +44,21 @@ Historial de commits realizados durante la implementación de User Stories.
 - **Resultado de tests:** Exitoso (62 tests pasando en 7 suites).
 
 ### Commit 5: `feat(billing): implement PDF invoice generator adapter`
-- **Hash:** `3a95484`
+- **Hash:** `6d3c03c`
 - **Fecha:** 2026-10-14
 - **Archivos creados/modificados:**
   - `services/billing/adapters/PdfInvoiceGenerator.js`: Adaptador que implementa el puerto `InvoiceGenerator`. Genera facturas en PDF utilizando `pdfkit` retornando un `Buffer`. Incluye encabezado "Factura — Malva Airlines", metadata del comprobante (`invoiceId`, `bookingId`, `issuedAt`, `currency`), datos del cliente (`customerName`, `customerEmail`), tabla detallada de ítems con descripción, cantidad, precio unitario y subtotal, total facturado y pie legal.
   - `tests/billing/PdfInvoiceGenerator.test.js`: Suite de pruebas unitarias que validan la generación de un `Buffer` no vacío, formato del magic number `%PDF`, soporte de múltiples ítems (pasajes, tasas, equipajes), soporte de caracteres especiales y manejo de excepciones ante inputs nulos.
   - `docs/plans/us/plan-emision-facturacion.md`: Marcado de commit 5 como completado.
 - **Resultado de tests:** Exitoso (67 tests pasando en 8 suites).
+
+### Commit 6: `feat(notifications): implement SMTP email sender adapter`
+- **Hash:** `1139fac`
+- **Fecha:** 2026-10-14
+- **Archivos creados/modificados:**
+  - `package.json`: Agregada dependencia `nodemailer` (^6.10.1).
+  - `.env.example`: Variables de entorno de ejemplo para configuración SMTP (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`).
+  - `services/notifications/adapters/SmtpEmailSender.js`: Adaptador que implementa el puerto `EmailSender`. Utiliza `nodemailer` configurado por opciones o variables de entorno. Envía correos con soporte HTML y texto plano, adjuntos en formato Buffer, y retorna `{ success: true, messageId }`. En caso de fallo de red o SMTP, propaga el error para permitir reintentos en capas superiores.
+  - `tests/notifications/SmtpEmailSender.test.js`: Suite de pruebas unitarias con mock de `nodemailer`, validando configuración del transporte, parámetros correctos en `sendMail` (`to`, `subject`, `html`, `attachments`), mapeo de adjuntos, retorno de `{ success: true, messageId }` y propagación de errores SMTP.
+  - `docs/plans/us/plan-emision-facturacion.md`: Marcado de commit 6 como completado.
+- **Resultado de tests:** Exitoso (73 tests pasando en 9 suites).
