@@ -22,3 +22,13 @@ Historial de commits realizados durante la implementación de User Stories.
   - `tests/billing/Invoice.test.js`: Suite de pruebas unitarias cubriendo creación válida, autogeneración de ID y fecha, soporte de Money y posicionales, validación de email y campos vacíos, consistencia de montos, inmutabilidad profunda y contrato del puerto.
   - `docs/plans/us/plan-emision-facturacion.md`: Marcado de commit 1 y 2 como completados.
 - **Resultado de tests:** Exitoso (46 tests pasando).
+
+### Commit 3: `feat(notifications): add EmailMessage value object and EmailSender port`
+- **Hash:** `8ac27f7`
+- **Fecha:** 2026-10-14
+- **Archivos creados/modificados:**
+  - `services/notifications/domain/EmailMessage.js`: Value object inmutable que representa un mensaje de correo electrónico con validación de destinatario (`to`), asunto no vacío (`subject`), cuerpo de mensaje (`body`), y array de adjuntos (`attachments`) con validación de nombre de archivo y contenido en `Buffer`. Aplica inmutabilidad profunda (`Object.freeze` a la instancia, al array y a cada adjunto).
+  - `services/notifications/domain/EmailSender.js`: Puerto hexagonal (clase abstracta) con método `async send(emailMessage)` que lanza `Method not implemented.`.
+  - `tests/notifications/EmailMessage.test.js`: Suite de pruebas unitarias que cubren creación con y sin adjuntos, soporte de parámetros posicionales, validación de emails y campos requeridos, validación de buffers en adjuntos, inmutabilidad profunda y contrato del puerto.
+  - `docs/plans/us/plan-emision-facturacion.md`: Marcado de commit 3 como completado.
+- **Resultado de tests:** Exitoso (57 tests pasando en 6 suites).

@@ -59,7 +59,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el Sprin
 - **DIP:** El caso de uso depende de abstracciones (puertos), no de implementaciones concretas.
 - **Value Objects inmutables:** `Ticket`, `Invoice`, `EmailMessage`, `CheckoutResult` usan `Object.freeze`.
 - **Test:** Todos los test deben seguir el modelo establecido en el proyecto (mock de dependencias externas, tests de integración con mocks de servicios externos) y deben pasar para que el commit este terminado.
-- **Commits:** Se debe seguir el formato establecido en el proyecto (feat(service): description). Al completarse un commit este debe marcarse como terminado.
+- **Commits:** Se debe seguir el formato establecido en el proyecto (feat(service): description). Al completarse un commit este debe marcarse como terminado. El commit no se realiza automaticamente, al estar finalizado se solicita autorizacion del usuario.
 - **Documentation:** Al final de cada commit se debe documentar los cambios realizados en el archivo `docs/commits.md`.
 
 ---
@@ -95,7 +95,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el Sprin
 
 ---
 
-### Commit 3 — `feat(notifications): add EmailMessage value object and EmailSender port` *(0.5 h)*
+### Commit 3 — `feat(notifications): add EmailMessage value object and EmailSender port` *(0.5 h)* — ✅ COMPLETADO
 
 **Qué se hace:**
 - Crear `services/notifications/domain/EmailMessage.js`: value object inmutable. Campos: `to` (email destino), `subject`, `body` (texto plano o HTML), `attachments` (array de `{ filename, content }` donde `content` es un `Buffer`). Valida formato de email con regex básico, `subject` no vacío. `Object.freeze(this)`.
@@ -224,7 +224,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el Sprin
 |---|---|---|---|---|
 | 1 | ✅ Completado | `feat(ticketing): add Ticket entity and TicketGenerator port` | `services/ticketing/domain/Ticket.js`, `services/ticketing/domain/TicketGenerator.js` | `tests/ticketing/Ticket.test.js` |
 | 2 | ✅ Completado | `feat(billing): add Invoice entity and InvoiceGenerator port` | `services/billing/domain/Invoice.js`, `services/billing/domain/InvoiceGenerator.js` | `tests/billing/Invoice.test.js` |
-| 3 | ⏳ Pendiente | `feat(notifications): add EmailMessage value object and EmailSender port` | `services/notifications/domain/EmailMessage.js`, `services/notifications/domain/EmailSender.js` | `tests/notifications/EmailMessage.test.js` |
+| 3 | ✅ Completado | `feat(notifications): add EmailMessage value object and EmailSender port` | `services/notifications/domain/EmailMessage.js`, `services/notifications/domain/EmailSender.js` | `tests/notifications/EmailMessage.test.js` |
 | 4 | ⏳ Pendiente | `feat(ticketing): implement PDF ticket generator adapter` | `services/ticketing/adapters/PdfTicketGenerator.js`, `package.json` (+pdfkit) | `tests/ticketing/PdfTicketGenerator.test.js` |
 | 5 | ⏳ Pendiente | `feat(billing): implement PDF invoice generator adapter` | `services/billing/adapters/PdfInvoiceGenerator.js` | `tests/billing/PdfInvoiceGenerator.test.js` |
 | 6 | ⏳ Pendiente | `feat(notifications): implement SMTP email sender adapter` | `services/notifications/adapters/SmtpEmailSender.js`, `package.json` (+nodemailer), `.env.example` | `tests/notifications/SmtpEmailSender.test.js` |
