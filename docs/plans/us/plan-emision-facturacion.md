@@ -110,7 +110,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el Sprin
 
 ---
 
-### Commit 4 — `feat(ticketing): implement PDF ticket generator adapter` *(1.5 h)*
+### Commit 4 — `feat(ticketing): implement PDF ticket generator adapter` *(1.5 h)* — ✅ COMPLETADO
 
 **Qué se hace:**
 - Crear `services/ticketing/adapters/PdfTicketGenerator.js`: implementa `TicketGenerator`. Usa la librería `pdfkit` para generar un PDF con los datos del pasaje electrónico. Contenido del PDF: título "Pasaje Electrónico — Malva Airlines", datos del vuelo (número, origen → destino, fecha, hora, asiento, clase), nombre del pasajero, código de reserva, fecha de emisión. Retorna un `Buffer` con el contenido del PDF.
@@ -225,7 +225,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el Sprin
 | 1 | ✅ Completado | `feat(ticketing): add Ticket entity and TicketGenerator port` | `services/ticketing/domain/Ticket.js`, `services/ticketing/domain/TicketGenerator.js` | `tests/ticketing/Ticket.test.js` |
 | 2 | ✅ Completado | `feat(billing): add Invoice entity and InvoiceGenerator port` | `services/billing/domain/Invoice.js`, `services/billing/domain/InvoiceGenerator.js` | `tests/billing/Invoice.test.js` |
 | 3 | ✅ Completado | `feat(notifications): add EmailMessage value object and EmailSender port` | `services/notifications/domain/EmailMessage.js`, `services/notifications/domain/EmailSender.js` | `tests/notifications/EmailMessage.test.js` |
-| 4 | ⏳ Pendiente | `feat(ticketing): implement PDF ticket generator adapter` | `services/ticketing/adapters/PdfTicketGenerator.js`, `package.json` (+pdfkit) | `tests/ticketing/PdfTicketGenerator.test.js` |
+| 4 | ✅ Completado | `feat(ticketing): implement PDF ticket generator adapter` | `services/ticketing/adapters/PdfTicketGenerator.js`, `package.json` (+pdfkit) | `tests/ticketing/PdfTicketGenerator.test.js` |
 | 5 | ⏳ Pendiente | `feat(billing): implement PDF invoice generator adapter` | `services/billing/adapters/PdfInvoiceGenerator.js` | `tests/billing/PdfInvoiceGenerator.test.js` |
 | 6 | ⏳ Pendiente | `feat(notifications): implement SMTP email sender adapter` | `services/notifications/adapters/SmtpEmailSender.js`, `package.json` (+nodemailer), `.env.example` | `tests/notifications/SmtpEmailSender.test.js` |
 | 7 | ⏳ Pendiente | `feat(checkout): add CheckoutResult value object` | `services/checkout/domain/CheckoutResult.js` | `tests/checkout/CheckoutResult.test.js` |
