@@ -1,9 +1,9 @@
-const CABIN_CLASSES = ['economy', 'first'];
+const CABIN_CLASSES = ['economy', 'firstClass'];
 
 class Capacity {
 	constructor(values = {}) {
 		this.economy = this._validate(values.economy, 'economy');
-		this.first = this._validate(values.first, 'first');
+		this.firstClass = this._validate(values.firstClass, 'firstClass');
 		Object.freeze(this);
 	}
 

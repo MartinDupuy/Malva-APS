@@ -1,4 +1,4 @@
-const VALID_DAYS = new Set([1, 2, 3, 4, 5, 6, 7]);
+const VALID_DAYS = new Set(['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']);
 
 class OperatingDays {
 	constructor(days) {
@@ -6,10 +6,10 @@ class OperatingDays {
 			throw new Error('Operating days must contain at least one day');
 		}
 		const uniqueDays = [...new Set(days)];
-		if (uniqueDays.some(day => !VALID_DAYS.has(day))) {
-			throw new Error('Operating days must use numbers from 1 to 7');
+			if (uniqueDays.some(day => !VALID_DAYS.has(day))) {
+				throw new Error('Operating days must use MON, TUE, WED, THU, FRI, SAT or SUN');
 		}
-		this.values = Object.freeze(uniqueDays.sort((first, second) => first - second));
+			this.values = Object.freeze(uniqueDays);
 		Object.freeze(this);
 	}
 

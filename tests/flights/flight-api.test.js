@@ -39,10 +39,11 @@ function sendRawRequest(port, method, path, body) {
 
 function validFlight() {
   return {
-    flightNumber: 'AR123', origin: 'EZE', destination: 'MAD',
-    departureTime: '10:00', arrivalTime: '22:00', operatingDays: [1, 3, 5],
-    startDate: '2026-01-01', endDate: '2026-12-31',
-    capacity: { economy: 180, first: 12 }
+    flightNumber: 'AR1234', originAirport: 'EZE', destinationAirport: 'COR',
+    departureTime: '10:00', arrivalTime: '22:00', operatingDays: ['MON', 'WED', 'FRI'],
+    availabilityPeriod: { startDate: '2026-01-01', endDate: '2026-12-31' },
+    capacity: { economy: 180, firstClass: 12 },
+    pricing: { economy: 85000.50, firstClass: 180000.00 }
   };
 }
 
@@ -74,11 +75,25 @@ describe('Flight REST API', () => {
   test('returns bad request for invalid operating days', async () => {
     const response = await sendRequest(port, 'POST', '/api/flights', {
       ...validFlight(),
-      operatingDays: [8]
+      operatingDays: ['INVALID']
     });
 
     expect(response.status).toBe(400);
     expect(response.body.error).toMatch(/Operating days/);
+  });
+
+  test.each([
+    ['invalid date range', { availabilityPeriod: { startDate: '2027-01-01', endDate: '2026-01-01' } }, /availabilityPeriod/],
+    ['invalid economy capacity', { capacity: { economy: -1, firstClass: 12 } }, /economy capacity/],
+    ['invalid first class price', { pricing: { economy: 85000, firstClass: -1 } }, /firstClass price/]
+  ])('returns bad request for %s', async (name, changes, errorPattern) => {
+    const response = await sendRequest(port, 'POST', '/api/flights', {
+      ...validFlight(),
+      ...changes
+    });
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toMatch(errorPattern);
   });
 
   test('returns bad request for malformed JSON', async () => {
