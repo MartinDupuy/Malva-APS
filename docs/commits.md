@@ -83,7 +83,7 @@ Historial de commits realizados durante la implementación de User Stories.
 - **Resultado de tests:** Exitoso (94 tests pasando en 11 suites).
 
 ### Commit 9: `feat(checkout): add seat release on payment failure`
-- **Hash:** `82765ff`
+- **Hash:** `c90794d`
 - **Fecha:** 2026-10-14
 - **Archivos creados/modificados:**
   - `services/checkout/domain/SeatReleaser.js`: Puerto hexagonal (clase abstracta) con método `async releaseSeats(bookingId) → Promise<void>`.
@@ -91,3 +91,12 @@ Historial de commits realizados durante la implementación de User Stories.
   - `tests/checkout/CheckoutService.seatRelease.test.js`: Suite de pruebas unitarias cubriendo contrato del puerto `SeatReleaser`, llamada exitosa a `releaseSeats` en rechazo, comportamiento sin releaser inyectado, manejo seguro ante fallos en el servicio de asientos y ausencia de liberación en pagos aprobados.
   - `docs/plans/us/plan-emision-facturacion.md`: Marcado de commit 9 como completado.
 - **Resultado de tests:** Exitoso (99 tests pasando en 12 suites).
+
+### Commit 10: `test(checkout): add integration test for full checkout flow`
+- **Hash:** `4bae2dc`
+- **Fecha:** 2026-10-14
+- **Archivos creados/modificados:**
+  - `docs/ticketing/checkout-flow.md`: Documentación de arquitectura con diagrama de secuencia Mermaid detallando el flujo end-to-end, interacción entre puertos y adaptadores, y políticas de tolerancia a fallos.
+  - `tests/checkout/CheckoutIntegration.test.js`: Test de integración end-to-end conectando `CheckoutService` con adaptadores reales (`PdfTicketGenerator` y `PdfInvoiceGenerator`) y mocks de puertos externos (`PaymentGateway`, `EmailSender`, `SeatReleaser`). Valida generación real de Buffers PDF con cabecera `%PDF`, despacho vía email de los adjuntos binarios reales, liberación de asientos en caso negativo y preservación del pago ante fallos de correo.
+  - `docs/plans/us/plan-emision-facturacion.md`: Marcado de commit 10 como completado.
+- **Resultado de tests:** Exitoso (102 tests pasando en 13 suites).
