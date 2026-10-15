@@ -26,7 +26,7 @@ describe('Booking REST API', () => {
   let port;
 
   beforeEach(async () => {
-    server = createApp().listen(0);
+    server = createApp({ bookingRepository: 'memory' }).listen(0);
     await new Promise(resolve => server.once('listening', resolve));
     port = server.address().port;
   });

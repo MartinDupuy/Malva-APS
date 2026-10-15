@@ -29,7 +29,7 @@ describe('Flight REST API with Express', () => {
   let port;
 
   beforeEach(async () => {
-    app = createApp();
+    app = createApp({ bookingRepository: 'memory' });
     server = app.listen(0);
     await new Promise(resolve => server.once('listening', resolve));
     port = server.address().port;

@@ -13,13 +13,13 @@ const { InMemorySeatHoldRepository } = require('./services/seats/adapters/in-mem
 const PostgresSeatHoldRepository = require('./services/seats/adapters/postgres-seat-hold-repository');
 const PostgresBookingRepository = require('./services/bookings/adapters/postgres-booking-repository');
 
-function createApp() {
+function createApp({ bookingRepository: bookingRepositoryType = process.env.BOOKING_REPOSITORY || 'postgres' } = {}) {
   const app = express();
   const flightRepository = createFlightRepository(process.env.FLIGHT_REPOSITORY || 'memory');
   const flightController = new FlightController(flightRepository);
   const seatsByFlightInstance = new Map();
   const seatFactory = new SeatFactory(seatsByFlightInstance);
-  const usePostgres = process.env.BOOKING_REPOSITORY === 'postgres';
+  const usePostgres = bookingRepositoryType === 'postgres';
   const seatHoldRepository = usePostgres
     ? new PostgresSeatHoldRepository({ seatsByFlightInstance })
     : new InMemorySeatHoldRepository({ seatsByFlightInstance });
@@ -60,8 +60,8 @@ function createFlightRepository(repositoryType) {
   throw new Error(`Unsupported flight repository: ${repositoryType}`);
 }
 
-const server = createServer();
 const port = Number(process.env.PORT) || 3000;
+const server = require.main === module ? createServer() : null;
 
 if (require.main === module) {
   server.listen(port, () => console.log(`Flight API listening on port ${port}`));
