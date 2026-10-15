@@ -10,6 +10,8 @@ const GetAvailability = require('./services/bookings/use-cases/get-availability'
 const CreateBooking = require('./services/bookings/use-cases/create-booking');
 const ConfirmBooking = require('./services/bookings/use-cases/confirm-booking');
 const { InMemorySeatHoldRepository } = require('./services/seats/adapters/in-memory-seat-hold-repository');
+const PostgresSeatHoldRepository = require('./services/seats/adapters/postgres-seat-hold-repository');
+const PostgresBookingRepository = require('./services/bookings/adapters/postgres-booking-repository');
 
 function createApp() {
   const app = express();
@@ -17,8 +19,11 @@ function createApp() {
   const flightController = new FlightController(flightRepository);
   const seatsByFlightInstance = new Map();
   const seatFactory = new SeatFactory(seatsByFlightInstance);
-  const seatHoldRepository = new InMemorySeatHoldRepository({ seatsByFlightInstance });
-  const bookingRepository = new InMemoryBookingRepository();
+  const usePostgres = process.env.BOOKING_REPOSITORY === 'postgres';
+  const seatHoldRepository = usePostgres
+    ? new PostgresSeatHoldRepository({ seatsByFlightInstance })
+    : new InMemorySeatHoldRepository({ seatsByFlightInstance });
+  const bookingRepository = usePostgres ? new PostgresBookingRepository() : new InMemoryBookingRepository();
   const bookingController = new BookingController({
     flightRepository,
     seatFactory,

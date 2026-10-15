@@ -6,9 +6,9 @@ class CreateBooking {
     this.seatHoldRepository = seatHoldRepository;
   }
 
-  execute({ flightInstanceId, passengers }) {
+  async execute({ flightInstanceId, passengers }) {
     const booking = new Booking({ flightInstanceId, passengers });
-    const hold = this.seatHoldRepository.createHold({
+    const hold = await this.seatHoldRepository.createHold({
       bookingId: booking.id,
       flightInstanceId,
       seatIds: passengers.map(({ seatId }) => seatId)

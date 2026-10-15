@@ -6,12 +6,12 @@ class ConfirmBooking {
     this.seatHoldRepository = seatHoldRepository;
   }
 
-  execute(bookingId) {
-    const booking = this.bookingRepository.findById(bookingId);
+  async execute(bookingId) {
+    const booking = await this.bookingRepository.findById(bookingId);
     if (!booking) throw new Error('booking not found');
     if (booking.status !== BOOKING_STATUSES.HELD) return booking;
 
-    this.seatHoldRepository.confirm(booking.holdId);
+    await this.seatHoldRepository.confirm(booking.holdId);
     return this.bookingRepository.create(booking.confirm());
   }
 }

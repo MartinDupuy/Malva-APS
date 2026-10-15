@@ -28,22 +28,22 @@ class BookingController {
       const flight = await this.flightRepository.findById(request.body.flightInstanceId);
       if (!flight) return response.status(404).json({ error: 'flight not found' });
       this.seatFactory.ensureForFlight(flight);
-      const booking = this.createBooking.execute(request.body);
+      const booking = await this.createBooking.execute(request.body);
       response.status(201).json(this._serialize(booking));
     } catch (error) {
       this._sendError(response, error);
     }
   }
 
-  get(request, response) {
-    const booking = this.bookingRepository.findById(request.params.bookingId);
+  async get(request, response) {
+    const booking = await this.bookingRepository.findById(request.params.bookingId);
     if (!booking) return response.status(404).json({ error: 'booking not found' });
     return response.json(this._serialize(booking));
   }
 
-  confirm(request, response) {
+  async confirm(request, response) {
     try {
-      response.json(this._serialize(this.confirmBooking.execute(request.params.bookingId)));
+      response.json(this._serialize(await this.confirmBooking.execute(request.params.bookingId)));
     } catch (error) {
       this._sendError(response, error);
     }

@@ -31,7 +31,7 @@ describe('Booking', () => {
       .toThrow(`between 1 and ${MAX_PASSENGERS}`);
   });
 
-  test('creates a booking only after all requested seats are held', () => {
+  test('creates a booking only after all requested seats are held', async () => {
     const seatHoldRepository = new InMemorySeatHoldRepository({
       seatsByFlightInstance: new Map([['flight-1', [
         new Seat({ id: 'E1', number: '1A', cabinClass: 'economy' }),
@@ -41,14 +41,14 @@ describe('Booking', () => {
     const bookingRepository = new InMemoryBookingRepository();
     const createBooking = new CreateBooking(bookingRepository, seatHoldRepository);
 
-    const booking = createBooking.execute({ flightInstanceId: 'flight-1', passengers });
+    const booking = await createBooking.execute({ flightInstanceId: 'flight-1', passengers });
 
     expect(bookingRepository.findById(booking.id)).toBe(booking);
     expect(booking.holdId).toBeTruthy();
     expect(seatHoldRepository.getById(booking.holdId).seatIds).toEqual(['E1', 'E2']);
   });
 
-  test('does not persist a booking when one requested seat is unavailable', () => {
+  test('does not persist a booking when one requested seat is unavailable', async () => {
     const seatHoldRepository = new InMemorySeatHoldRepository({
       seatsByFlightInstance: new Map([['flight-1', [
         new Seat({ id: 'E1', number: '1A', cabinClass: 'economy' })
@@ -57,8 +57,8 @@ describe('Booking', () => {
     const bookingRepository = new InMemoryBookingRepository();
     const createBooking = new CreateBooking(bookingRepository, seatHoldRepository);
 
-    expect(() => createBooking.execute({ flightInstanceId: 'flight-1', passengers }))
-      .toThrow('do not belong to the flight instance');
+    await expect(createBooking.execute({ flightInstanceId: 'flight-1', passengers }))
+      .rejects.toThrow('do not belong to the flight instance');
     expect(bookingRepository.bookings.size).toBe(0);
   });
 });
