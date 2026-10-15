@@ -1,0 +1,12 @@
+import { useState } from 'react';
+import { useBooking } from '../../hooks/useBooking';
+
+export function SeatSelection({ flight, onBack }) {
+  const { seats, selectedSeatIds, toggleSeat, booking, reserve, confirm, error, isLoading } = useBooking(flight);
+  const [passengers, setPassengers] = useState({});
+  const selectedSeats = seats.filter(seat => selectedSeatIds.includes(seat.id));
+  const updatePassenger = (seatId, field, value) => setPassengers(current => ({ ...current, [seatId]: { ...current[seatId], [field]: value } }));
+  const submit = async event => { event.preventDefault(); await reserve(selectedSeats.map(seat => ({ seatId: seat.id, ...passengers[seat.id] }))); };
+
+  return <main className="booking-page"><button className="text-button" type="button" onClick={onBack}>← Volver a resultados</button><div className="booking-heading"><span className="eyebrow">Reserva de pasajes</span><h1>{flight.originAirport} → {flight.destinationAirport}</h1><p>Elegí hasta 9 asientos. El bloqueo dura 10 minutos.</p></div>{error && <div className="alert error">{error.message}</div>}{booking ? <section className="booking-confirmation"><span className="eyebrow">Asientos bloqueados</span><h2>Reserva lista para confirmar</h2><p>Identificador: {booking.id}</p><button className="primary-button" type="button" onClick={confirm}>Confirmar compra</button></section> : <form onSubmit={submit}><div className="cabin-tabs"><strong>Clase:</strong><span>Economy</span><span>Primera Clase</span></div><div className="seat-grid">{seats.map(seat => <button key={seat.id} type="button" disabled={seat.status !== 'AVAILABLE'} className={`seat ${seat.cabinClass} ${selectedSeatIds.includes(seat.id) ? 'selected' : ''}`} onClick={() => toggleSeat(seat.id)}>{seat.number}</button>)}</div>{selectedSeats.map(seat => <div className="passenger-row" key={seat.id}><strong>Asiento {seat.number}</strong><input required placeholder="Nombre completo" value={passengers[seat.id]?.name || ''} onChange={event => updatePassenger(seat.id, 'name', event.target.value)} /><input required type="email" placeholder="Email" value={passengers[seat.id]?.email || ''} onChange={event => updatePassenger(seat.id, 'email', event.target.value)} /></div>)}<button className="primary-button" type="submit" disabled={isLoading || selectedSeats.length === 0}>Bloquear {selectedSeats.length} asiento{selectedSeats.length === 1 ? '' : 's'}</button></form>}</main>;
+}
