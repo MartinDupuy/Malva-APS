@@ -92,6 +92,12 @@ BOOKING_REPOSITORY=memory npm start
 
 #### Con PostgreSQL
 
+### Levantar PostgreSQL
+
+```bash
+docker run --name malva-postgres   -e POSTGRES_PASSWORD=postgres   -e POSTGRES_DB=malva   -p 5432:5432   -d postgres:16
+```
+
 Definir la cadena de conexión antes de iniciar el backend:
 
 ```bash
@@ -104,6 +110,7 @@ También puede indicarse `DATABASE_URL` en la misma línea:
 ```bash
 DATABASE_URL='postgresql://usuario:password@localhost:5432/malva' npm start
 ```
+
 
 La base de datos y el servidor PostgreSQL deben existir y estar disponibles. Si no se define `BOOKING_REPOSITORY`, el backend utiliza PostgreSQL por defecto.
 
@@ -139,6 +146,12 @@ Para listar todos los vuelos activos sin filtros:
 
 ```bash
 curl "http://localhost:3000/api/flights/search"
+```
+
+Agregar un vuelo de ejemplo:
+
+```bash
+curl.exe -X POST "http://localhost:3000/api/flights" -H "Content-Type: application/json" -d "{\"flightNumber\":\"MAL1234\",\"originAirport\":\"EZE\",\"destinationAirport\":\"COR\",\"departureTime\":\"08:30\",\"arrivalTime\":\"09:45\",\"operatingDays\":[\"MON\",\"TUE\",\"WED\",\"THU\",\"FRI\"],\"availabilityPeriod\":{\"startDate\":\"2026-10-20\",\"endDate\":\"2026-12-31\"},\"capacity\":{\"economy\":120,\"firstClass\":12},\"pricing\":{\"economy\":85000,\"firstClass\":150000},\"currency\":\"ARS\"}"
 ```
 
 ### Pruebas y build
