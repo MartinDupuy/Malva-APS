@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { confirmBooking, createBooking, getSeatAvailability } from '../services/bookingService';
 
 export function useBooking(flight) {
@@ -7,10 +7,12 @@ export function useBooking(flight) {
   const [booking, setBooking] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const bookingRef = useRef(null);
 
   const refreshAvailability = async () => {
     try {
       const availableSeats = await getSeatAvailability(flight.id);
+      if (bookingRef.current) return;
       setSeats(availableSeats);
       setSelectedSeatIds(current => {
         const availableIds = new Set(availableSeats.filter(seat => seat.status === 'AVAILABLE').map(seat => seat.id));
@@ -26,6 +28,8 @@ export function useBooking(flight) {
   };
 
   useEffect(() => {
+    if (booking) return undefined;
+    bookingRef.current = null;
     setIsLoading(true);
     refreshAvailability().finally(() => setIsLoading(false));
     const interval = window.setInterval(refreshAvailability, 5000);
@@ -34,7 +38,7 @@ export function useBooking(flight) {
       window.clearInterval(interval);
       window.removeEventListener('focus', refreshAvailability);
     };
-  }, [flight]);
+  }, [flight, booking]);
 
   const toggleSeat = seatId => {
     const seat = seats.find(currentSeat => currentSeat.id === seatId);
@@ -50,7 +54,12 @@ export function useBooking(flight) {
 
   const reserve = async passengers => {
     setIsLoading(true); setError(null);
-    try { const result = await createBooking(flight.id, passengers); setBooking(result); return result; }
+    try {
+      const result = await createBooking(flight.id, passengers);
+      bookingRef.current = result;
+      setBooking(result);
+      return result;
+    }
     catch (requestError) { setError(requestError); await refreshAvailability(); throw requestError; }
     finally { setIsLoading(false); }
   };
