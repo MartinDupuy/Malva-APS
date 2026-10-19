@@ -66,7 +66,7 @@ El sistema está diseñado bajo una arquitectura de **Monolito Modular Stateless
 ### Requisitos
 
 - Node.js y npm instalados.
-- No se requiere una base de datos para ejecutar el módulo actual de vuelos: utiliza un repositorio en memoria.
+- PostgreSQL es necesario para ejecutar el backend con persistencia.
 
 ### Instalación
 
@@ -76,15 +76,36 @@ Desde la raíz del proyecto:
 npm install
 ```
 
-Las variables de SMTP del archivo `.env.example` solo son necesarias para los módulos de notificaciones. La API de vuelos funciona sin configuración adicional.
+Las variables de SMTP del archivo `.env.example` solo son necesarias para los módulos de notificaciones. Para ejecutar el backend con PostgreSQL, también es necesario definir `DATABASE_URL`.
 
 ### Levantar el backend
+
+#### Con repositorios en memoria
+
+Esta opción no requiere PostgreSQL y es suficiente para probar la API localmente. Los vuelos y las reservas se pierden al reiniciar el backend.
 
 En una terminal:
 
 ```bash
+BOOKING_REPOSITORY=memory npm start
+```
+
+#### Con PostgreSQL
+
+Definir la cadena de conexión antes de iniciar el backend:
+
+```bash
+export DATABASE_URL='postgresql://usuario:password@localhost:5432/malva'
 npm start
 ```
+
+También puede indicarse `DATABASE_URL` en la misma línea:
+
+```bash
+DATABASE_URL='postgresql://usuario:password@localhost:5432/malva' npm start
+```
+
+La base de datos y el servidor PostgreSQL deben existir y estar disponibles. Si no se define `BOOKING_REPOSITORY`, el backend utiliza PostgreSQL por defecto.
 
 La API Express queda disponible en `http://localhost:3000`.
 
@@ -140,4 +161,4 @@ Previsualizar el build:
 npm run preview
 ```
 
-La persistencia actual es temporal: los vuelos almacenados en memoria se pierden al reiniciar el backend.
+Con `BOOKING_REPOSITORY=memory`, la persistencia es temporal: los vuelos y las reservas se pierden al reiniciar el backend. Con PostgreSQL, las reservas y los bloqueos de asientos se almacenan en la base de datos.
