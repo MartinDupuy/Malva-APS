@@ -66,7 +66,7 @@ El sistema está diseñado bajo una arquitectura de **Monolito Modular Stateless
 ### Requisitos
 
 - Node.js y npm instalados.
-- No se requiere una base de datos para ejecutar el módulo actual de vuelos: utiliza un repositorio en memoria.
+- PostgreSQL es necesario para ejecutar el backend con persistencia.
 
 ### Instalación
 
@@ -76,15 +76,43 @@ Desde la raíz del proyecto:
 npm install
 ```
 
-Las variables de SMTP del archivo `.env.example` solo son necesarias para los módulos de notificaciones. La API de vuelos funciona sin configuración adicional.
+Las variables de SMTP del archivo `.env.example` solo son necesarias para los módulos de notificaciones. Para ejecutar el backend con PostgreSQL, también es necesario definir `DATABASE_URL`.
 
 ### Levantar el backend
+
+#### Con repositorios en memoria
+
+Esta opción no requiere PostgreSQL y es suficiente para probar la API localmente. Los vuelos y las reservas se pierden al reiniciar el backend.
 
 En una terminal:
 
 ```bash
+BOOKING_REPOSITORY=memory npm start
+```
+
+#### Con PostgreSQL
+
+### Levantar PostgreSQL
+
+```bash
+docker run --name malva-postgres   -e POSTGRES_PASSWORD=postgres   -e POSTGRES_DB=malva   -p 5432:5432   -d postgres:16
+```
+
+Definir la cadena de conexión antes de iniciar el backend:
+
+```bash
+export DATABASE_URL='postgresql://usuario:password@localhost:5432/malva'
 npm start
 ```
+
+También puede indicarse `DATABASE_URL` en la misma línea:
+
+```bash
+DATABASE_URL='postgresql://usuario:password@localhost:5432/malva' npm start
+```
+
+
+La base de datos y el servidor PostgreSQL deben existir y estar disponibles. Si no se define `BOOKING_REPOSITORY`, el backend utiliza PostgreSQL por defecto.
 
 La API Express queda disponible en `http://localhost:3000`.
 
@@ -120,6 +148,12 @@ Para listar todos los vuelos activos sin filtros:
 curl "http://localhost:3000/api/flights/search"
 ```
 
+Agregar un vuelo de ejemplo:
+
+```bash
+curl.exe -X POST "http://localhost:3000/api/flights" -H "Content-Type: application/json" -d "{\"flightNumber\":\"MAL1234\",\"originAirport\":\"EZE\",\"destinationAirport\":\"COR\",\"departureTime\":\"08:30\",\"arrivalTime\":\"09:45\",\"operatingDays\":[\"MON\",\"TUE\",\"WED\",\"THU\",\"FRI\"],\"availabilityPeriod\":{\"startDate\":\"2026-10-20\",\"endDate\":\"2026-12-31\"},\"capacity\":{\"economy\":120,\"firstClass\":12},\"pricing\":{\"economy\":85000,\"firstClass\":150000},\"currency\":\"ARS\"}"
+```
+
 ### Pruebas y build
 
 Ejecutar las pruebas:
@@ -140,4 +174,4 @@ Previsualizar el build:
 npm run preview
 ```
 
-La persistencia actual es temporal: los vuelos almacenados en memoria se pierden al reiniciar el backend.
+Con `BOOKING_REPOSITORY=memory`, la persistencia es temporal: los vuelos y las reservas se pierden al reiniciar el backend. Con PostgreSQL, las reservas y los bloqueos de asientos se almacenan en la base de datos.
