@@ -148,10 +148,21 @@ Historial de commits realizados durante la implementación de User Stories.
 - **Resultado de tests:** Exitoso (185 tests pasando en 26 suites).
 
 ### Commit 5: `feat(auth): implement LoginUser use case`
-- **Hash:** `Pendiente`
+- **Hash:** `8c847d5`
 - **Fecha:** 2026-10-30
 - **Archivos creados/modificados:**
   - `services/auth/use-cases/LoginUser.js`: Caso de uso para inicio de sesión seguro, con validación de credenciales (búsqueda de usuario, comparación de contraseñas con bcrypt), mensaje genérico de error ('invalid credentials') para evitar filtrado de usuarios existentes, y emisión de token JWT firmado que incluye ID de usuario, email y rol asignado.
   - `tests/auth/LoginUser.test.js`: Suite de pruebas unitarias que cubren inicio de sesión exitoso, generación y verificación del token JWT, asignación correcta de roles (PASSENGER, ADMIN, COUNTER_AGENT), rechazo por email inexistente o contraseña incorrecta, validación de parámetros del constructor y entradas vacías/inválidas.
   - `docs/plans/us/plan-autenticacion-acceso-roles.md`: Marcado de commit 5 como completado.
 - **Resultado de tests:** Exitoso (193 tests pasando en 27 suites).
+
+### Commit 6: `feat(auth): add authentication and authorization middlewares`
+- **Hash:** `Pendiente`
+- **Fecha:** 2026-10-30
+- **Archivos creados/modificados:**
+  - `infra/auth-middleware.js`: Middleware Express de autenticación que valida tokens JWT en el header `Authorization: Bearer <token>`, adjunta `req.user` (`userId`, `email`, `role`) a la solicitud y responde 401 Unauthorized ante tokens ausentes, malformados o expirados.
+  - `infra/role-middleware.js`: Factory function `requireRole` que valida que el usuario autenticado posea uno de los roles autorizados; responde 403 Forbidden ante permisos insuficientes y 401 si la petición no está autenticada.
+  - `tests/auth/auth-middleware.test.js`: Suite de pruebas unitarias cubriendo autenticación exitosa, headers en mayúsculas/minúsculas, ausencia de cabecera Authorization, esquemas no-Bearer, tokens vacíos, manipulados o expirados.
+  - `tests/auth/role-middleware.test.js`: Suite de pruebas unitarias verificando acceso concedido para roles autorizados individuales y múltiples (array o varargs), bloqueo 403 para roles insuficientes y 401 ante usuario no autenticado.
+  - `docs/plans/us/plan-autenticacion-acceso-roles.md`: Marcado de commit 6 como completado.
+- **Resultado de tests:** Exitoso (208 tests pasando en 29 suites).

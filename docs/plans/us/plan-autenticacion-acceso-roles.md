@@ -191,7 +191,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el proye
 
 ---
 
-### Commit 6 — `feat(auth): add authentication and authorization middlewares` *(3 h)*
+### Commit 6 — `feat(auth): add authentication and authorization middlewares` *(3 h)* — ✅ COMPLETADO
 
 **Qué se hace:**
 - Crear `infra/auth-middleware.js`: middleware Express de autenticación. Recibe `tokenService` por factory function. Extrae el token del header `Authorization: Bearer <token>`, lo verifica con `tokenService.verify()`, y adjunta `req.user = { userId, email, role }` al request. Si no hay token o es inválido, responde `401 Unauthorized` con `{ error: 'authentication required' }`.
@@ -272,7 +272,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el proye
 | 3 | ✅ Completado | `feat(auth): add TokenService port and JwtTokenService adapter` | `services/auth/domain/TokenService.js`, `services/auth/adapters/JwtTokenService.js`, `package.json` (+jsonwebtoken), `.env.example` | `tests/auth/JwtTokenService.test.js` |
 | 4 | ✅ Completado | `feat(auth): implement RegisterUser use case` | `services/auth/adapters/InMemoryUserRepository.js`, `services/auth/use-cases/RegisterUser.js` | `tests/auth/RegisterUser.test.js` |
 | 5 | ✅ Completado | `feat(auth): implement LoginUser use case` | `services/auth/use-cases/LoginUser.js` | `tests/auth/LoginUser.test.js` |
-| 6 | ⬜ Pendiente | `feat(auth): add authentication and authorization middlewares` | `infra/auth-middleware.js`, `infra/role-middleware.js` | `tests/auth/auth-middleware.test.js`, `tests/auth/role-middleware.test.js` |
+| 6 | ✅ Completado | `feat(auth): add authentication and authorization middlewares` | `infra/auth-middleware.js`, `infra/role-middleware.js` | `tests/auth/auth-middleware.test.js`, `tests/auth/role-middleware.test.js` |
 | 7 | ⬜ Pendiente | `feat(auth): add auth endpoints and protect existing routes` | `services/auth/adapters/AuthController.js`, `infra/auth-router.js`, `server.js` (mod) | `tests/auth/AuthIntegration.test.js` |
 | 8 | ⬜ Pendiente | `feat(auth): add login and register pages to frontend` | `frontend/src/hooks/useAuth.js`, `frontend/src/components/auth/LoginForm.jsx`, `frontend/src/components/auth/RegisterForm.jsx`, `frontend/src/pages/LoginPage.jsx`, `frontend/src/pages/RegisterPage.jsx`, `frontend/src/main.jsx` (mod), `frontend/src/styles.css` (mod) | Tests manuales de UI |
 
