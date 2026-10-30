@@ -116,7 +116,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el proye
 
 ---
 
-### Commit 2 — `feat(auth): add PasswordHasher port and BcryptPasswordHasher adapter` *(2 h)*
+### Commit 2 — `feat(auth): add PasswordHasher port and BcryptPasswordHasher adapter` *(2 h)* — ✅ COMPLETADO
 
 **Qué se hace:**
 - Crear `services/auth/domain/PasswordHasher.js`: puerto (clase abstracta) con métodos `async hash(plainPassword) → Promise<string>` y `async compare(plainPassword, hashedPassword) → Promise<boolean>`. Ambos lanzan `Error('Method not implemented.')`.
@@ -268,7 +268,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el proye
 | # | Estado | Commit | Archivos nuevos / modificados | Tests |
 |---|---|---|---|---|
 | 1 | ✅ Completado | `feat(auth): add User entity and Roles constants` | `services/auth/domain/User.js`, `services/auth/domain/Roles.js` | `tests/auth/User.test.js`, `tests/auth/Roles.test.js` |
-| 2 | ⬜ Pendiente | `feat(auth): add PasswordHasher port and BcryptPasswordHasher adapter` | `services/auth/domain/PasswordHasher.js`, `services/auth/adapters/BcryptPasswordHasher.js`, `package.json` (+bcryptjs) | `tests/auth/BcryptPasswordHasher.test.js` |
+| 2 | ✅ Completado | `feat(auth): add PasswordHasher port and BcryptPasswordHasher adapter` | `services/auth/domain/PasswordHasher.js`, `services/auth/adapters/BcryptPasswordHasher.js`, `package.json` (+bcryptjs) | `tests/auth/BcryptPasswordHasher.test.js` |
 | 3 | ⬜ Pendiente | `feat(auth): add TokenService port and JwtTokenService adapter` | `services/auth/domain/TokenService.js`, `services/auth/adapters/JwtTokenService.js`, `package.json` (+jsonwebtoken), `.env.example` | `tests/auth/JwtTokenService.test.js` |
 | 4 | ⬜ Pendiente | `feat(auth): implement RegisterUser use case` | `services/auth/adapters/InMemoryUserRepository.js`, `services/auth/use-cases/RegisterUser.js` | `tests/auth/RegisterUser.test.js` |
 | 5 | ⬜ Pendiente | `feat(auth): implement LoginUser use case` | `services/auth/use-cases/LoginUser.js` | `tests/auth/LoginUser.test.js` |

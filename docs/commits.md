@@ -104,7 +104,7 @@ Historial de commits realizados durante la implementación de User Stories.
 ## US: Autenticación, Control de Acceso y Gestión de Roles
 
 ### Commit 1: `feat(auth): add User entity and Roles constants`
-- **Hash:** `5ae3cd1`
+- **Hash:** `8b12fd5`
 - **Fecha:** 2026-10-30
 - **Archivos creados/modificados:**
   - `services/auth/domain/Roles.js`: Constantes inmutables de roles (`PASSENGER`, `ADMIN`, `COUNTER_AGENT`), array `ALL_ROLES` y función de validación `isValidRole`.
@@ -113,3 +113,14 @@ Historial de commits realizados durante la implementación de User Stories.
   - `tests/auth/User.test.js`: Suite de pruebas unitarias que cubren creación válida, rol por defecto, validaciones de campos, trim de strings, autogeneración de ID y fecha, argumentos posicionales e inmutabilidad profunda.
   - `docs/plans/us/plan-autenticacion-acceso-roles.md`: Marcado de commit 1 como completado.
 - **Resultado de tests:** Exitoso (160 tests pasando en 23 suites).
+
+### Commit 2: `feat(auth): add PasswordHasher port and BcryptPasswordHasher adapter`
+- **Hash:** `Pendiente`
+- **Fecha:** 2026-10-30
+- **Archivos creados/modificados:**
+  - `package.json`: Agregada dependencia `bcryptjs` (^3.0.3).
+  - `services/auth/domain/PasswordHasher.js`: Puerto hexagonal (clase abstracta) con métodos `async hash(plainPassword)` y `async compare(plainPassword, hashedPassword)` que lanzan `Method not implemented.`.
+  - `services/auth/adapters/BcryptPasswordHasher.js`: Adaptador que implementa el puerto `PasswordHasher` usando `bcryptjs`. Permite configurar salt rounds (default 10) y valida entradas antes de hashear o comparar.
+  - `tests/auth/BcryptPasswordHasher.test.js`: Suite de pruebas unitarias que cubren cumplimiento del contrato del puerto, hashing con salt aleatorio, comparación correcta e incorrecta, manejo de entradas vacías y herencia del puerto.
+  - `docs/plans/us/plan-autenticacion-acceso-roles.md`: Marcado de commit 2 como completado.
+- **Resultado de tests:** Exitoso (168 tests pasando en 24 suites).
