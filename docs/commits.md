@@ -100,3 +100,16 @@ Historial de commits realizados durante la implementación de User Stories.
   - `tests/checkout/CheckoutIntegration.test.js`: Test de integración end-to-end conectando `CheckoutService` con adaptadores reales (`PdfTicketGenerator` y `PdfInvoiceGenerator`) y mocks de puertos externos (`PaymentGateway`, `EmailSender`, `SeatReleaser`). Valida generación real de Buffers PDF con cabecera `%PDF`, despacho vía email de los adjuntos binarios reales, liberación de asientos en caso negativo y preservación del pago ante fallos de correo.
   - `docs/plans/us/plan-emision-facturacion.md`: Marcado de commit 10 como completado.
 - **Resultado de tests:** Exitoso (102 tests pasando en 13 suites).
+
+## US: Autenticación, Control de Acceso y Gestión de Roles
+
+### Commit 1: `feat(auth): add User entity and Roles constants`
+- **Hash:** `5ae3cd1`
+- **Fecha:** 2026-10-30
+- **Archivos creados/modificados:**
+  - `services/auth/domain/Roles.js`: Constantes inmutables de roles (`PASSENGER`, `ADMIN`, `COUNTER_AGENT`), array `ALL_ROLES` y función de validación `isValidRole`.
+  - `services/auth/domain/User.js`: Entidad inmutable que representa un usuario del sistema, con validación de campos requeridos (`name`, `email`, `passwordHash`), rol por defecto (`PASSENGER`), autogeneración de `id` (UUID) y `createdAt`, y `Object.freeze`.
+  - `tests/auth/Roles.test.js`: Suite de pruebas unitarias que cubren definición de roles, inmutabilidad de constantes y validación de roles.
+  - `tests/auth/User.test.js`: Suite de pruebas unitarias que cubren creación válida, rol por defecto, validaciones de campos, trim de strings, autogeneración de ID y fecha, argumentos posicionales e inmutabilidad profunda.
+  - `docs/plans/us/plan-autenticacion-acceso-roles.md`: Marcado de commit 1 como completado.
+- **Resultado de tests:** Exitoso (160 tests pasando en 23 suites).
