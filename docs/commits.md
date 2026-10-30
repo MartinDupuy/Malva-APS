@@ -138,7 +138,7 @@ Historial de commits realizados durante la implementación de User Stories.
 - **Resultado de tests:** Exitoso (177 tests pasando en 25 suites).
 
 ### Commit 4: `feat(auth): implement RegisterUser use case`
-- **Hash:** `Pendiente`
+- **Hash:** `5881f7e`
 - **Fecha:** 2026-10-30
 - **Archivos creados/modificados:**
   - `services/auth/adapters/InMemoryUserRepository.js`: Repositorio de usuarios en memoria con búsqueda por email (normalizado/insensible a mayúsculas), búsqueda por ID y creación.
@@ -146,3 +146,12 @@ Historial de commits realizados durante la implementación de User Stories.
   - `tests/auth/RegisterUser.test.js`: Suite de pruebas unitarias que cubren registro exitoso, rol por defecto PASSENGER, roles explícitos ADMIN y COUNTER_AGENT, rechazo de emails duplicados, validación de contraseña corta/vacía y validaciones delegadas a la entidad User.
   - `docs/plans/us/plan-autenticacion-acceso-roles.md`: Marcado de commit 4 como completado.
 - **Resultado de tests:** Exitoso (185 tests pasando en 26 suites).
+
+### Commit 5: `feat(auth): implement LoginUser use case`
+- **Hash:** `Pendiente`
+- **Fecha:** 2026-10-30
+- **Archivos creados/modificados:**
+  - `services/auth/use-cases/LoginUser.js`: Caso de uso para inicio de sesión seguro, con validación de credenciales (búsqueda de usuario, comparación de contraseñas con bcrypt), mensaje genérico de error ('invalid credentials') para evitar filtrado de usuarios existentes, y emisión de token JWT firmado que incluye ID de usuario, email y rol asignado.
+  - `tests/auth/LoginUser.test.js`: Suite de pruebas unitarias que cubren inicio de sesión exitoso, generación y verificación del token JWT, asignación correcta de roles (PASSENGER, ADMIN, COUNTER_AGENT), rechazo por email inexistente o contraseña incorrecta, validación de parámetros del constructor y entradas vacías/inválidas.
+  - `docs/plans/us/plan-autenticacion-acceso-roles.md`: Marcado de commit 5 como completado.
+- **Resultado de tests:** Exitoso (193 tests pasando en 27 suites).

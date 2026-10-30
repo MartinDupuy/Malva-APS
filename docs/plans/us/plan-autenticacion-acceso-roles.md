@@ -171,7 +171,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el proye
 
 ---
 
-### Commit 5 — `feat(auth): implement LoginUser use case` *(2 h)*
+### Commit 5 — `feat(auth): implement LoginUser use case` *(2 h)* — ✅ COMPLETADO
 
 **Qué se hace:**
 - Crear `services/auth/use-cases/LoginUser.js`: caso de uso. Recibe `userRepository`, `passwordHasher` y `tokenService` por constructor. Método `async execute({ email, password })`:
@@ -271,7 +271,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el proye
 | 2 | ✅ Completado | `feat(auth): add PasswordHasher port and BcryptPasswordHasher adapter` | `services/auth/domain/PasswordHasher.js`, `services/auth/adapters/BcryptPasswordHasher.js`, `package.json` (+bcryptjs) | `tests/auth/BcryptPasswordHasher.test.js` |
 | 3 | ✅ Completado | `feat(auth): add TokenService port and JwtTokenService adapter` | `services/auth/domain/TokenService.js`, `services/auth/adapters/JwtTokenService.js`, `package.json` (+jsonwebtoken), `.env.example` | `tests/auth/JwtTokenService.test.js` |
 | 4 | ✅ Completado | `feat(auth): implement RegisterUser use case` | `services/auth/adapters/InMemoryUserRepository.js`, `services/auth/use-cases/RegisterUser.js` | `tests/auth/RegisterUser.test.js` |
-| 5 | ⬜ Pendiente | `feat(auth): implement LoginUser use case` | `services/auth/use-cases/LoginUser.js` | `tests/auth/LoginUser.test.js` |
+| 5 | ✅ Completado | `feat(auth): implement LoginUser use case` | `services/auth/use-cases/LoginUser.js` | `tests/auth/LoginUser.test.js` |
 | 6 | ⬜ Pendiente | `feat(auth): add authentication and authorization middlewares` | `infra/auth-middleware.js`, `infra/role-middleware.js` | `tests/auth/auth-middleware.test.js`, `tests/auth/role-middleware.test.js` |
 | 7 | ⬜ Pendiente | `feat(auth): add auth endpoints and protect existing routes` | `services/auth/adapters/AuthController.js`, `infra/auth-router.js`, `server.js` (mod) | `tests/auth/AuthIntegration.test.js` |
 | 8 | ⬜ Pendiente | `feat(auth): add login and register pages to frontend` | `frontend/src/hooks/useAuth.js`, `frontend/src/components/auth/LoginForm.jsx`, `frontend/src/components/auth/RegisterForm.jsx`, `frontend/src/pages/LoginPage.jsx`, `frontend/src/pages/RegisterPage.jsx`, `frontend/src/main.jsx` (mod), `frontend/src/styles.css` (mod) | Tests manuales de UI |
