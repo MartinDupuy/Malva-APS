@@ -56,6 +56,18 @@ function createApp({
   const adminOnlyMiddleware = requireRole(ROLES.ADMIN);
 
   app.use(express.json({ limit: '1mb' }));
+  app.get('/', (req, res) => {
+    res.json({
+      name: 'Malva Airlines API',
+      status: 'online',
+      frontend: 'http://localhost:5173',
+      endpoints: {
+        auth: '/api/auth',
+        flights: '/api/flights',
+        bookings: '/api'
+      }
+    });
+  });
   app.use('/api/auth', createAuthRouter(authController));
   app.use('/api/flights', createFlightRouter(flightController, protectRoutes ? { authMiddleware, roleMiddleware: adminOnlyMiddleware } : {}));
   app.use('/api', createBookingRouter(bookingController, protectRoutes ? { authMiddleware } : {}));

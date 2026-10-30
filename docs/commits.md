@@ -181,7 +181,7 @@ Historial de commits realizados durante la implementación de User Stories.
 - **Resultado de tests:** Exitoso (219 tests pasando en 30 suites).
 
 ### Commit 8: `feat(auth): add login and register pages to frontend`
-- **Hash:** `Pendiente`
+- **Hash:** `8385a70`
 - **Fecha:** 2026-10-30
 - **Archivos creados/modificados:**
   - `frontend/src/services/authService.js`: Servicio cliente HTTP para llamadas a `/api/auth/register` y `/api/auth/login`.
@@ -196,3 +196,11 @@ Historial de commits realizados durante la implementación de User Stories.
   - `frontend/src/main.jsx`: Configurado enrutador por hash para alternar entre vista pública de pasajeros (por defecto), Login, Registro y Administración protegida con bloqueo si el rol no es ADMIN.
   - `docs/plans/us/plan-autenticacion-acceso-roles.md`: Marcado de commit 8 como completado.
 - **Resultado de tests:** Compilación frontend exitosa (`vite build`) y 219 tests pasando en 30 suites.
+
+### Commit 9: `fix(api): add root endpoint and resolve dev server module conflict`
+- **Hash:** `Pendiente`
+- **Fecha:** 2026-10-30
+- **Archivos creados/modificados:**
+  - `server.js`: Agregado endpoint informativo en `GET /` que devuelve estado de la API, URL del frontend y rutas principales, evitando la respuesta por defecto `Cannot GET /`.
+  - Eliminada carpeta residual `frontend/node_modules/` que generaba conflicto de resolución de módulos con Rolldown en el servidor de desarrollo de Vite.
+- **Resultado de tests:** Exitoso (219 tests pasando en 30 suites).
