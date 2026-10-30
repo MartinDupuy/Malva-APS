@@ -157,7 +157,7 @@ Historial de commits realizados durante la implementación de User Stories.
 - **Resultado de tests:** Exitoso (193 tests pasando en 27 suites).
 
 ### Commit 6: `feat(auth): add authentication and authorization middlewares`
-- **Hash:** `Pendiente`
+- **Hash:** `5439aa3`
 - **Fecha:** 2026-10-30
 - **Archivos creados/modificados:**
   - `infra/auth-middleware.js`: Middleware Express de autenticación que valida tokens JWT en el header `Authorization: Bearer <token>`, adjunta `req.user` (`userId`, `email`, `role`) a la solicitud y responde 401 Unauthorized ante tokens ausentes, malformados o expirados.
@@ -166,3 +166,16 @@ Historial de commits realizados durante la implementación de User Stories.
   - `tests/auth/role-middleware.test.js`: Suite de pruebas unitarias verificando acceso concedido para roles autorizados individuales y múltiples (array o varargs), bloqueo 403 para roles insuficientes y 401 ante usuario no autenticado.
   - `docs/plans/us/plan-autenticacion-acceso-roles.md`: Marcado de commit 6 como completado.
 - **Resultado de tests:** Exitoso (208 tests pasando en 29 suites).
+
+### Commit 7: `feat(auth): add auth endpoints and protect existing routes`
+- **Hash:** `Pendiente`
+- **Fecha:** 2026-10-30
+- **Archivos creados/modificados:**
+  - `services/auth/adapters/AuthController.js`: Controlador HTTP para endpoints de autenticación (`register` y `login`) con manejo adecuado de códigos de respuesta (201, 200, 400, 401, 409).
+  - `infra/auth-router.js`: Router Express que expone las rutas `POST /register` y `POST /login`.
+  - `infra/flight-router.js`: Modificado para aceptar opcionalmente middlewares de autenticación y rol de administrador, protegiendo mutaciones (`POST /`, `PUT /:id`, `DELETE /:id`) y manteniendo públicas las búsquedas de vuelos.
+  - `infra/booking-router.js`: Modificado para aceptar opcionalmente middleware de autenticación, protegiendo creación y confirmación de reservas.
+  - `server.js`: Instanciadas dependencias del módulo auth, montado `auth-router` bajo `/api/auth` y agregada opción `protectRoutes` en `createApp`.
+  - `tests/auth/AuthIntegration.test.js`: Suite completa de pruebas de integración end-to-end con servidor Express real, cubriendo registro (201, 409 duplicado, 400 validación), login (200 con JWT, 401 credenciales inválidas), acceso público a búsqueda de vuelos, bloqueo 401 de rutas sin token, bloqueo 403 a pasajero en rutas de administrador y flujo exitoso de reserva autenticada.
+  - `docs/plans/us/plan-autenticacion-acceso-roles.md`: Marcado de commit 7 como completado.
+- **Resultado de tests:** Exitoso (219 tests pasando en 30 suites).

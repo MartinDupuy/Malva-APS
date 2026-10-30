@@ -218,7 +218,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el proye
 
 ---
 
-### Commit 7 — `feat(auth): add auth endpoints and protect existing routes` *(2 h)*
+### Commit 7 — `feat(auth): add auth endpoints and protect existing routes` *(2 h)* — ✅ COMPLETADO
 
 **Qué se hace:**
 - Crear `services/auth/adapters/AuthController.js`: controlador HTTP con métodos `register(req, res)` y `login(req, res)`. Delega a los casos de uso `RegisterUser` y `LoginUser`. Maneja errores con códigos HTTP apropiados (400 para validación, 409 para email duplicado, 401 para credenciales inválidas).
@@ -273,7 +273,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el proye
 | 4 | ✅ Completado | `feat(auth): implement RegisterUser use case` | `services/auth/adapters/InMemoryUserRepository.js`, `services/auth/use-cases/RegisterUser.js` | `tests/auth/RegisterUser.test.js` |
 | 5 | ✅ Completado | `feat(auth): implement LoginUser use case` | `services/auth/use-cases/LoginUser.js` | `tests/auth/LoginUser.test.js` |
 | 6 | ✅ Completado | `feat(auth): add authentication and authorization middlewares` | `infra/auth-middleware.js`, `infra/role-middleware.js` | `tests/auth/auth-middleware.test.js`, `tests/auth/role-middleware.test.js` |
-| 7 | ⬜ Pendiente | `feat(auth): add auth endpoints and protect existing routes` | `services/auth/adapters/AuthController.js`, `infra/auth-router.js`, `server.js` (mod) | `tests/auth/AuthIntegration.test.js` |
+| 7 | ✅ Completado | `feat(auth): add auth endpoints and protect existing routes` | `services/auth/adapters/AuthController.js`, `infra/auth-router.js`, `server.js` (mod) | `tests/auth/AuthIntegration.test.js` |
 | 8 | ⬜ Pendiente | `feat(auth): add login and register pages to frontend` | `frontend/src/hooks/useAuth.js`, `frontend/src/components/auth/LoginForm.jsx`, `frontend/src/components/auth/RegisterForm.jsx`, `frontend/src/pages/LoginPage.jsx`, `frontend/src/pages/RegisterPage.jsx`, `frontend/src/main.jsx` (mod), `frontend/src/styles.css` (mod) | Tests manuales de UI |
 
 ---

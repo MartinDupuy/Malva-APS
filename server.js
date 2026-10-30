@@ -12,8 +12,24 @@ const ConfirmBooking = require('./services/bookings/use-cases/confirm-booking');
 const { InMemorySeatHoldRepository } = require('./services/seats/adapters/in-memory-seat-hold-repository');
 const PostgresSeatHoldRepository = require('./services/seats/adapters/postgres-seat-hold-repository');
 const PostgresBookingRepository = require('./services/bookings/adapters/postgres-booking-repository');
+const InMemoryUserRepository = require('./services/auth/adapters/InMemoryUserRepository');
+const BcryptPasswordHasher = require('./services/auth/adapters/BcryptPasswordHasher');
+const JwtTokenService = require('./services/auth/adapters/JwtTokenService');
+const RegisterUser = require('./services/auth/use-cases/RegisterUser');
+const LoginUser = require('./services/auth/use-cases/LoginUser');
+const AuthController = require('./services/auth/adapters/AuthController');
+const createAuthRouter = require('./infra/auth-router');
+const createAuthMiddleware = require('./infra/auth-middleware');
+const requireRole = require('./infra/role-middleware');
+const { ROLES } = require('./services/auth/domain/Roles');
 
-function createApp({ bookingRepository: bookingRepositoryType = process.env.BOOKING_REPOSITORY || 'postgres' } = {}) {
+function createApp({
+  bookingRepository: bookingRepositoryType = process.env.BOOKING_REPOSITORY || 'postgres',
+  userRepository = new InMemoryUserRepository(),
+  passwordHasher = new BcryptPasswordHasher(),
+  tokenService = new JwtTokenService(),
+  protectRoutes = false,
+} = {}) {
   const app = express();
   const flightRepository = createFlightRepository(process.env.FLIGHT_REPOSITORY || 'memory');
   const flightController = new FlightController(flightRepository);
@@ -33,15 +49,22 @@ function createApp({ bookingRepository: bookingRepositoryType = process.env.BOOK
     bookingRepository
   });
 
+  const registerUser = new RegisterUser(userRepository, passwordHasher);
+  const loginUser = new LoginUser(userRepository, passwordHasher, tokenService);
+  const authController = new AuthController({ registerUser, loginUser });
+  const authMiddleware = createAuthMiddleware(tokenService);
+  const adminOnlyMiddleware = requireRole(ROLES.ADMIN);
+
   app.use(express.json({ limit: '1mb' }));
-  app.use('/api/flights', createFlightRouter(flightController));
-  app.use('/api', createBookingRouter(bookingController));
+  app.use('/api/auth', createAuthRouter(authController));
+  app.use('/api/flights', createFlightRouter(flightController, protectRoutes ? { authMiddleware, roleMiddleware: adminOnlyMiddleware } : {}));
+  app.use('/api', createBookingRouter(bookingController, protectRoutes ? { authMiddleware } : {}));
   app.use(handleApiError);
   return app;
 }
 
 function createServer() {
-  return createApp();
+  return createApp({ protectRoutes: true });
 }
 
 function handleApiError(error, request, response, next) {
