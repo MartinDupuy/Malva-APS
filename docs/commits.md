@@ -115,7 +115,7 @@ Historial de commits realizados durante la implementación de User Stories.
 - **Resultado de tests:** Exitoso (160 tests pasando en 23 suites).
 
 ### Commit 2: `feat(auth): add PasswordHasher port and BcryptPasswordHasher adapter`
-- **Hash:** `Pendiente`
+- **Hash:** `e1985f3`
 - **Fecha:** 2026-10-30
 - **Archivos creados/modificados:**
   - `package.json`: Agregada dependencia `bcryptjs` (^3.0.3).
@@ -124,3 +124,15 @@ Historial de commits realizados durante la implementación de User Stories.
   - `tests/auth/BcryptPasswordHasher.test.js`: Suite de pruebas unitarias que cubren cumplimiento del contrato del puerto, hashing con salt aleatorio, comparación correcta e incorrecta, manejo de entradas vacías y herencia del puerto.
   - `docs/plans/us/plan-autenticacion-acceso-roles.md`: Marcado de commit 2 como completado.
 - **Resultado de tests:** Exitoso (168 tests pasando en 24 suites).
+
+### Commit 3: `feat(auth): add TokenService port and JwtTokenService adapter`
+- **Hash:** `Pendiente`
+- **Fecha:** 2026-10-30
+- **Archivos creados/modificados:**
+  - `package.json`: Agregada dependencia `jsonwebtoken` (^9.0.2).
+  - `.env.example`: Agregadas variables de entorno de ejemplo `JWT_SECRET` y `JWT_EXPIRES_IN`.
+  - `services/auth/domain/TokenService.js`: Puerto hexagonal (clase abstracta) con métodos `sign(payload)` y `verify(token)` que lanzan `Method not implemented.`.
+  - `services/auth/adapters/JwtTokenService.js`: Adaptador que implementa el puerto `TokenService` con `jsonwebtoken`. Permite configurar secreto y tiempo de expiración (default 8h). Valida payload y token.
+  - `tests/auth/JwtTokenService.test.js`: Suite de pruebas unitarias que cubren cumplimiento del contrato del puerto, firma y decodificación de tokens JWT, detección de tokens manipulados, manejo de expiración y validación de entradas.
+  - `docs/plans/us/plan-autenticacion-acceso-roles.md`: Marcado de commit 3 como completado.
+- **Resultado de tests:** Exitoso (177 tests pasando en 25 suites).
