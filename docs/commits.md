@@ -126,7 +126,7 @@ Historial de commits realizados durante la implementación de User Stories.
 - **Resultado de tests:** Exitoso (168 tests pasando en 24 suites).
 
 ### Commit 3: `feat(auth): add TokenService port and JwtTokenService adapter`
-- **Hash:** `Pendiente`
+- **Hash:** `b7c46b2`
 - **Fecha:** 2026-10-30
 - **Archivos creados/modificados:**
   - `package.json`: Agregada dependencia `jsonwebtoken` (^9.0.2).
@@ -136,3 +136,13 @@ Historial de commits realizados durante la implementación de User Stories.
   - `tests/auth/JwtTokenService.test.js`: Suite de pruebas unitarias que cubren cumplimiento del contrato del puerto, firma y decodificación de tokens JWT, detección de tokens manipulados, manejo de expiración y validación de entradas.
   - `docs/plans/us/plan-autenticacion-acceso-roles.md`: Marcado de commit 3 como completado.
 - **Resultado de tests:** Exitoso (177 tests pasando en 25 suites).
+
+### Commit 4: `feat(auth): implement RegisterUser use case`
+- **Hash:** `Pendiente`
+- **Fecha:** 2026-10-30
+- **Archivos creados/modificados:**
+  - `services/auth/adapters/InMemoryUserRepository.js`: Repositorio de usuarios en memoria con búsqueda por email (normalizado/insensible a mayúsculas), búsqueda por ID y creación.
+  - `services/auth/use-cases/RegisterUser.js`: Caso de uso para registrar nuevos usuarios con validación de contraseña mínima (>= 6 caracteres), verificación de email duplicado, hashing seguro de contraseña y persistencia sin exponer el hash en la respuesta.
+  - `tests/auth/RegisterUser.test.js`: Suite de pruebas unitarias que cubren registro exitoso, rol por defecto PASSENGER, roles explícitos ADMIN y COUNTER_AGENT, rechazo de emails duplicados, validación de contraseña corta/vacía y validaciones delegadas a la entidad User.
+  - `docs/plans/us/plan-autenticacion-acceso-roles.md`: Marcado de commit 4 como completado.
+- **Resultado de tests:** Exitoso (185 tests pasando en 26 suites).
