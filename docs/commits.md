@@ -168,7 +168,7 @@ Historial de commits realizados durante la implementación de User Stories.
 - **Resultado de tests:** Exitoso (208 tests pasando en 29 suites).
 
 ### Commit 7: `feat(auth): add auth endpoints and protect existing routes`
-- **Hash:** `Pendiente`
+- **Hash:** `e2793d3`
 - **Fecha:** 2026-10-30
 - **Archivos creados/modificados:**
   - `services/auth/adapters/AuthController.js`: Controlador HTTP para endpoints de autenticación (`register` y `login`) con manejo adecuado de códigos de respuesta (201, 200, 400, 401, 409).
@@ -179,3 +179,20 @@ Historial de commits realizados durante la implementación de User Stories.
   - `tests/auth/AuthIntegration.test.js`: Suite completa de pruebas de integración end-to-end con servidor Express real, cubriendo registro (201, 409 duplicado, 400 validación), login (200 con JWT, 401 credenciales inválidas), acceso público a búsqueda de vuelos, bloqueo 401 de rutas sin token, bloqueo 403 a pasajero en rutas de administrador y flujo exitoso de reserva autenticada.
   - `docs/plans/us/plan-autenticacion-acceso-roles.md`: Marcado de commit 7 como completado.
 - **Resultado de tests:** Exitoso (219 tests pasando en 30 suites).
+
+### Commit 8: `feat(auth): add login and register pages to frontend`
+- **Hash:** `Pendiente`
+- **Fecha:** 2026-10-30
+- **Archivos creados/modificados:**
+  - `frontend/src/services/authService.js`: Servicio cliente HTTP para llamadas a `/api/auth/register` y `/api/auth/login`.
+  - `frontend/src/hooks/useAuth.js`: Hook React para gestión de estado de autenticación, persistencia en `localStorage`, login, registro y cierre de sesión.
+  - `frontend/src/components/auth/auth.css`: Estilos visuales con la identidad de marca de Malva Airlines para tarjetas de autenticación, formularios, estados de error y badges de usuario.
+  - `frontend/src/components/auth/LoginForm.jsx`: Formulario interactivo de inicio de sesión con validación de campos requeridos y visualización de errores.
+  - `frontend/src/components/auth/RegisterForm.jsx`: Formulario interactivo de registro con validación de coincidencia de contraseñas y longitud mínima.
+  - `frontend/src/pages/LoginPage.jsx`: Pantalla de inicio de sesión integrada con redirección inteligente según rol.
+  - `frontend/src/pages/RegisterPage.jsx`: Pantalla de registro de usuarios con auto-login posterior.
+  - `frontend/src/pages/PassengerSearchPage.jsx`: Actualizado para mostrar estado de sesión, nombre y rol del usuario, acceso directo a panel de administración si corresponde y botón de salida.
+  - `frontend/src/pages/AdminFlightsPage.jsx`: Actualizado para mostrar información del administrador en sesión y permitir volver a la vista pública.
+  - `frontend/src/main.jsx`: Configurado enrutador por hash para alternar entre vista pública de pasajeros (por defecto), Login, Registro y Administración protegida con bloqueo si el rol no es ADMIN.
+  - `docs/plans/us/plan-autenticacion-acceso-roles.md`: Marcado de commit 8 como completado.
+- **Resultado de tests:** Compilación frontend exitosa (`vite build`) y 219 tests pasando en 30 suites.

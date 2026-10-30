@@ -248,7 +248,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el proye
 
 ---
 
-### Commit 8 — `feat(auth): add login and register pages to frontend` *(1 h)*
+### Commit 8 — `feat(auth): add login and register pages to frontend` *(1 h)* — ✅ COMPLETADO
 
 **Qué se hace:**
 - Crear `frontend/src/hooks/useAuth.js`: hook de React que maneja el estado de autenticación. Almacena el token y los datos del usuario en `localStorage`. Expone `{ user, token, login, register, logout, isAuthenticated }`. Incluye lógica para hidratar el estado desde `localStorage` al montar.
@@ -274,7 +274,7 @@ Se sigue el patrón de puertos y adaptadores (hexagonal) establecido en el proye
 | 5 | ✅ Completado | `feat(auth): implement LoginUser use case` | `services/auth/use-cases/LoginUser.js` | `tests/auth/LoginUser.test.js` |
 | 6 | ✅ Completado | `feat(auth): add authentication and authorization middlewares` | `infra/auth-middleware.js`, `infra/role-middleware.js` | `tests/auth/auth-middleware.test.js`, `tests/auth/role-middleware.test.js` |
 | 7 | ✅ Completado | `feat(auth): add auth endpoints and protect existing routes` | `services/auth/adapters/AuthController.js`, `infra/auth-router.js`, `server.js` (mod) | `tests/auth/AuthIntegration.test.js` |
-| 8 | ⬜ Pendiente | `feat(auth): add login and register pages to frontend` | `frontend/src/hooks/useAuth.js`, `frontend/src/components/auth/LoginForm.jsx`, `frontend/src/components/auth/RegisterForm.jsx`, `frontend/src/pages/LoginPage.jsx`, `frontend/src/pages/RegisterPage.jsx`, `frontend/src/main.jsx` (mod), `frontend/src/styles.css` (mod) | Tests manuales de UI |
+| 8 | ✅ Completado | `feat(auth): add login and register pages to frontend` | `frontend/src/hooks/useAuth.js`, `frontend/src/components/auth/LoginForm.jsx`, `frontend/src/components/auth/RegisterForm.jsx`, `frontend/src/pages/LoginPage.jsx`, `frontend/src/pages/RegisterPage.jsx`, `frontend/src/main.jsx` (mod), `frontend/src/components/auth/auth.css` | Tests manuales de UI |
 
 ---
 
