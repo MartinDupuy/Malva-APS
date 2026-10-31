@@ -178,4 +178,54 @@ describe('NotifyFlightChange use case', () => {
     expect(result).toEqual({ sent: 1, failed: 1 });
     consoleSpy.mockRestore();
   });
+
+  test('skips passengers without valid email or empty passengers array gracefully', async () => {
+    mockBookingRepository.findByFlightInstanceId.mockResolvedValue([
+      {
+        id: 'b-empty',
+        passengers: [],
+      },
+      {
+        id: 'b-no-email',
+        passengers: [
+          { name: 'Sin Email', email: '' },
+          { name: 'Email Invalido', email: 'no-es-un-email' },
+          { name: 'Con Email', email: 'valido@test.com' },
+        ],
+      },
+    ]);
+
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    const result = await notifyFlightChange.execute({
+      flight: sampleFlight,
+      changeType: 'CANCELLATION',
+    });
+
+    expect(result).toEqual({ sent: 1, failed: 0 });
+    expect(mockEmailSender.send).toHaveBeenCalledTimes(1);
+    expect(mockEmailSender.send.mock.calls[0][0].to).toBe('valido@test.com');
+
+    consoleSpy.mockRestore();
+  });
+
+  test('handles schedule change when previousFlight is not provided', async () => {
+    mockBookingRepository.findByFlightInstanceId.mockResolvedValue([
+      {
+        id: 'b-1',
+        passengers: [{ name: 'Pasajero Solo', email: 'solo@test.com' }],
+      },
+    ]);
+
+    const result = await notifyFlightChange.execute({
+      flight: sampleFlight,
+      previousFlight: null,
+      changeType: 'SCHEDULE_CHANGE',
+    });
+
+    expect(result).toEqual({ sent: 1, failed: 0 });
+    expect(mockEmailSender.send).toHaveBeenCalledTimes(1);
+    expect(mockEmailSender.send.mock.calls[0][0].body).toContain('AR1300');
+  });
 });
+
