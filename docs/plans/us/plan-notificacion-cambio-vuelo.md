@@ -135,7 +135,7 @@ Formato: `tipo(alcance): descripción en minúsculas`
 
 | Estimación | 2 h |
 |---|---|
-| Estado | ⬜ PENDIENTE |
+| Estado | ✅ COMPLETADO |
 
 #### Qué se hace
 
@@ -198,7 +198,7 @@ Formato: `tipo(alcance): descripción en minúsculas`
 |---|---|---|---|---|
 | 1 | ✅ | `feat(bookings): add findByFlightInstanceId to booking repositories` | `in-memory-booking-repository.js`, `postgres-booking-repository.js` | `booking-repository.test.js` |
 | 2 | ✅ | `feat(notifications): add email templates for flight changes` | `flight-schedule-change.js`, `flight-cancellation.js` | `flight-schedule-change-template.test.js`, `flight-cancellation-template.test.js` |
-| 3 | ⬜ | `feat(notifications): add NotifyFlightChange use case` | `notify-flight-change.js` | `NotifyFlightChange.test.js` |
+| 3 | ✅ | `feat(notifications): add NotifyFlightChange use case` | `notify-flight-change.js` | `NotifyFlightChange.test.js` |
 | 4 | ⬜ | `feat(flights): integrate notifications on flight update and cancel` | `flight-controller.js`, `server.js` | `flight-notification-integration.test.js` |
 
 ---
