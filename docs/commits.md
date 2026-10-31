@@ -198,9 +198,51 @@ Historial de commits realizados durante la implementación de User Stories.
 - **Resultado de tests:** Compilación frontend exitosa (`vite build`) y 219 tests pasando en 30 suites.
 
 ### Commit 9: `fix(api): add root endpoint and resolve dev server module conflict`
-- **Hash:** `Pendiente`
+- **Hash:** `1a98824`
 - **Fecha:** 2026-10-30
 - **Archivos creados/modificados:**
   - `server.js`: Agregado endpoint informativo en `GET /` que devuelve estado de la API, URL del frontend y rutas principales, evitando la respuesta por defecto `Cannot GET /`.
   - Eliminada carpeta residual `frontend/node_modules/` que generaba conflicto de resolución de módulos con Rolldown en el servidor de desarrollo de Vite.
 - **Resultado de tests:** Exitoso (219 tests pasando en 30 suites).
+
+## US: Notificaciones por cambios de vuelo
+
+### Commit 1: `feat(bookings): add findByFlightInstanceId to booking repositories`
+- **Hash:** `c5c0791`
+- **Fecha:** 2026-10-31
+- **Archivos creados/modificados:**
+  - `services/bookings/adapters/in-memory-booking-repository.js`: Agregado método `findByFlightInstanceId` para filtrar y retornar reservas confirmadas asociadas a un vuelo.
+  - `services/bookings/adapters/postgres-booking-repository.js`: Agregado método `findByFlightInstanceId` con consulta SQL filtrando por `flight_instance_id` y `status = 'CONFIRMED'`, mapeando los resultados a instancias de `Booking`.
+  - `tests/bookings/booking-repository.test.js`: Suite de pruebas unitarias cubriendo escenarios con lista vacía, filtrado estricto de reservas confirmadas (excluyendo HELD y CANCELLED), múltiples reservas por vuelo y mapeo Postgres.
+  - `docs/plans/us/plan-notificacion-cambio-vuelo.md`: Plan de implementación creado y marcado commit 1 como completado.
+- **Resultado de tests:** Exitoso (4 tests pasando en 1 suite).
+
+### Commit 2: `feat(notifications): add email templates for flight changes`
+- **Hash:** `59cf2a9`
+- **Fecha:** 2026-10-31
+- **Archivos creados/modificados:**
+  - `services/notifications/templates/flight-schedule-change.js`: Función pura constructora de template de correo para cambios de horario, incluyendo tabla comparativa de horarios (anterior vs nuevo), ruta de vuelo y recomendaciones de reprogramación.
+  - `services/notifications/templates/flight-cancellation.js`: Función pura constructora de template de correo para cancelaciones, detallando opciones de reprogramación gratuita y reembolso total.
+  - `tests/notifications/flight-schedule-change-template.test.js`: Suite de pruebas unitarias verificando asunto, nombre de pasajero, horarios anterior y nuevo, ruta y valores por defecto.
+  - `tests/notifications/flight-cancellation-template.test.js`: Suite de pruebas unitarias verificando asunto, nombre de pasajero, ruta, horario y opciones de reprogramación/reembolso.
+  - `docs/plans/us/plan-notificacion-cambio-vuelo.md`: Marcado de commit 2 como completado.
+- **Resultado de tests:** Exitoso (27 tests pasando en 4 suites de notificaciones).
+
+### Commit 3: `feat(notifications): add NotifyFlightChange use case`
+- **Hash:** `ce7105e`
+- **Fecha:** 2026-10-31
+- **Archivos creados/modificados:**
+  - `services/notifications/use-cases/notify-flight-change.js`: Caso de uso orquestador que consulta reservas confirmadas por vuelo, genera los mensajes `EmailMessage` utilizando el template correspondiente (`SCHEDULE_CHANGE` o `CANCELLATION`), y realiza el envío concurrente y resiliente mediante `Promise.allSettled`.
+  - `tests/notifications/NotifyFlightChange.test.js`: Suite de pruebas unitarias validando inyección de dependencias, tipos de cambio válidos, generación de `EmailMessage`, envío masivo entre múltiples reservas y tolerancia a fallos individuales de envío sin detener el lote.
+  - `docs/plans/us/plan-notificacion-cambio-vuelo.md`: Marcado de commit 3 como completado.
+- **Resultado de tests:** Exitoso (35 tests pasando en 5 suites de notificaciones).
+
+### Commit 4: `feat(flights): integrate notifications on flight update and cancel`
+- **Hash:** `6db30ff`
+- **Fecha:** 2026-10-31
+- **Archivos creados/modificados:**
+  - `services/flights/adapters/flight-controller.js`: Modificado para aceptar `notifyFlightChange` opcional. Captura el estado previo del vuelo antes de actualizar y dispara notificaciones asíncronas tipo fire-and-forget en `update` (SCHEDULE_CHANGE) y `cancel` (CANCELLATION), manteniendo compatibilidad retroactiva total.
+  - `server.js`: Cableado de dependencias instanciando `NotifyFlightChange` con `bookingRepository` y `emailSender` (configurable vía SMTP o inyección), inyectándolo en `FlightController`.
+  - `tests/flights/flight-notification-integration.test.js`: Suite completa de pruebas de integración end-to-end con servidor Express real cubriendo invocación de trigger ante PUT y DELETE, resiliencia ante errores de notificación, compatibilidad sin notificador y flujo completo end-to-end (creación de vuelo → reserva confirmada con pasajeros → cancelación/reprogramación → verificación de emails enviados).
+  - `docs/plans/us/plan-notificacion-cambio-vuelo.md`: Marcado de commit 4 como completado.
+- **Resultado de tests:** Exitoso (247 tests pasando en 35 suites).

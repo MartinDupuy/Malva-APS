@@ -22,6 +22,8 @@ const createAuthRouter = require('./infra/auth-router');
 const createAuthMiddleware = require('./infra/auth-middleware');
 const requireRole = require('./infra/role-middleware');
 const { ROLES } = require('./services/auth/domain/Roles');
+const SmtpEmailSender = require('./services/notifications/adapters/SmtpEmailSender');
+const NotifyFlightChange = require('./services/notifications/use-cases/notify-flight-change');
 
 function createApp({
   bookingRepository: bookingRepositoryType = process.env.BOOKING_REPOSITORY || 'postgres',
@@ -29,10 +31,11 @@ function createApp({
   passwordHasher = new BcryptPasswordHasher(),
   tokenService = new JwtTokenService(),
   protectRoutes = false,
+  emailSender: customEmailSender = null,
+  notifyFlightChange: customNotifyFlightChange = null,
 } = {}) {
   const app = express();
   const flightRepository = createFlightRepository(process.env.FLIGHT_REPOSITORY || 'memory');
-  const flightController = new FlightController(flightRepository);
   const seatsByFlightInstance = new Map();
   const seatFactory = new SeatFactory(seatsByFlightInstance);
   const usePostgres = bookingRepositoryType === 'postgres';
@@ -40,6 +43,13 @@ function createApp({
     ? new PostgresSeatHoldRepository({ seatsByFlightInstance })
     : new InMemorySeatHoldRepository({ seatsByFlightInstance });
   const bookingRepository = usePostgres ? new PostgresBookingRepository() : new InMemoryBookingRepository();
+
+  const emailSender = customEmailSender || (process.env.SMTP_HOST ? new SmtpEmailSender() : null);
+  const notifyFlightChange = customNotifyFlightChange || (
+    emailSender ? new NotifyFlightChange({ bookingRepository, emailSender }) : null
+  );
+
+  const flightController = new FlightController(flightRepository, { notifyFlightChange });
   const bookingController = new BookingController({
     flightRepository,
     seatFactory,
