@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { confirmBooking, createBooking, getSeatAvailability } from '../services/bookingService';
 
-export function useBooking(flight) {
+export function useBooking(flight, flightInstanceId = flight.id) {
   const [seats, setSeats] = useState([]);
   const [selectedSeatIds, setSelectedSeatIds] = useState([]);
   const [booking, setBooking] = useState(null);
@@ -11,7 +11,7 @@ export function useBooking(flight) {
 
   const refreshAvailability = async () => {
     try {
-      const availableSeats = await getSeatAvailability(flight.id);
+      const availableSeats = await getSeatAvailability(flightInstanceId);
       if (bookingRef.current) return;
       setSeats(availableSeats);
       setSelectedSeatIds(current => {
@@ -38,9 +38,9 @@ export function useBooking(flight) {
       window.clearInterval(interval);
       window.removeEventListener('focus', refreshAvailability);
     };
-  }, [flight, booking]);
+  }, [flightInstanceId, booking]);
 
-  const toggleSeat = seatId => {
+  const toggleSeat = (seatId, maximumSeats = 9) => {
     const seat = seats.find(currentSeat => currentSeat.id === seatId);
     if (!seat || seat.status !== 'AVAILABLE') {
       setError(new Error('Ese asiento ya no está disponible. Actualizando disponibilidad...'));
@@ -49,13 +49,15 @@ export function useBooking(flight) {
     }
     setSelectedSeatIds(current => current.includes(seatId)
       ? current.filter(id => id !== seatId)
-      : current.length < 9 ? [...current, seatId] : current);
+      : current.length < Math.min(maximumSeats, 9) ? [...current, seatId] : current);
   };
+
+  const clearSelection = () => setSelectedSeatIds([]);
 
   const reserve = async passengers => {
     setIsLoading(true); setError(null);
     try {
-      const result = await createBooking(flight.id, passengers);
+      const result = await createBooking(flightInstanceId, passengers);
       bookingRef.current = result;
       setBooking(result);
       return result;
@@ -65,5 +67,5 @@ export function useBooking(flight) {
   };
 
   const confirm = async () => { const result = await confirmBooking(booking.id); setBooking(result); return result; };
-  return { seats, selectedSeatIds, toggleSeat, booking, reserve, confirm, error, isLoading };
+  return { seats, selectedSeatIds, toggleSeat, clearSelection, booking, reserve, confirm, error, isLoading };
 }

@@ -1,4 +1,5 @@
 const DAY_CODES = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+const FlightInstance = require('../domain/flight-instance');
 
 class SearchFlights {
   constructor(flightRepository, availabilityService = null) {
@@ -10,15 +11,24 @@ class SearchFlights {
     const filters = this._normalizeCriteria(criteria);
     const flights = await this.flightRepository.findAll();
     const candidates = flights.filter(flight => this._matches(flight, filters));
-    if (!this.availabilityService || filters.passengers === null) return candidates;
+    if (!this.availabilityService || filters.passengers === null) {
+      return candidates.map(flight => this._withInstanceId(flight, filters.date));
+    }
 
     const availableFlights = await Promise.all(candidates.map(async flight => {
-      const seats = await this.availabilityService.execute(flight.id);
+      const instance = filters.date ? new FlightInstance(flight, filters.date) : null;
+      const flightInstanceId = instance?.id || flight.id;
+      const seats = await this.availabilityService.execute(flightInstanceId);
       const availableSeats = this._countAvailableSeats(seats);
       if (!this._hasAvailableSeats(availableSeats, filters)) return null;
-      return { ...flight, availableSeats };
+      return { ...flight, flightInstanceId, availableSeats };
     }));
     return availableFlights.filter(Boolean);
+  }
+
+  _withInstanceId(flight, date) {
+    if (!date) return flight;
+    return { ...flight, flightInstanceId: new FlightInstance(flight, date).id };
   }
 
   _normalizeCriteria(criteria) {

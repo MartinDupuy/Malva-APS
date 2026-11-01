@@ -21,6 +21,13 @@ class InMemoryBookingRepository {
     }
     return results;
   }
+
+  findByFlightId(flightId) {
+    return [...this.bookings.values()].filter(booking =>
+      (booking.flightInstanceId === flightId || booking.flightInstanceId.startsWith(`${flightId}::`))
+      && booking.status === 'CONFIRMED'
+    );
+  }
 }
 
 module.exports = InMemoryBookingRepository;

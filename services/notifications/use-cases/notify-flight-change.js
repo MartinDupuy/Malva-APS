@@ -39,7 +39,9 @@ class NotifyFlightChange {
       throw new Error(`Invalid changeType: ${changeType}`);
     }
 
-    const bookings = await this.bookingRepository.findByFlightInstanceId(flight.id);
+    const findAffectedBookings = this.bookingRepository.findByFlightId
+      || this.bookingRepository.findByFlightInstanceId;
+    const bookings = await findAffectedBookings.call(this.bookingRepository, flight.id);
     if (!Array.isArray(bookings) || bookings.length === 0) {
       return { sent: 0, failed: 0 };
     }

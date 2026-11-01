@@ -1,3 +1,5 @@
+const FlightInstance = require('../../flights/domain/flight-instance');
+
 class BookingController {
   constructor({ flightRepository, seatFactory, getAvailability, createBooking, confirmBooking, bookingRepository }) {
     this.flightRepository = flightRepository;
@@ -25,10 +27,14 @@ class BookingController {
 
   async create(request, response) {
     try {
-      const flight = await this.flightRepository.findById(request.body.flightInstanceId);
+      const identity = FlightInstance.parseId(request.body.flightInstanceId);
+      const flight = await this.flightRepository.findById(identity.flightId);
       if (!flight) return response.status(404).json({ error: 'flight not found' });
-      this.seatFactory.ensureForFlight(flight);
-      const booking = await this.createBooking.execute(request.body);
+      const flightInstanceId = identity.date
+        ? new FlightInstance(flight, identity.date).id
+        : flight.id;
+      this.seatFactory.ensureForFlight(flight, flightInstanceId);
+      const booking = await this.createBooking.execute({ ...request.body, flightInstanceId });
       response.status(201).json(this._serialize(booking));
     } catch (error) {
       this._sendError(response, error);

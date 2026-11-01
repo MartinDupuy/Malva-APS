@@ -14,7 +14,7 @@ async function request(path, options = {}) {
   return body;
 }
 
-export const getSeatAvailability = flightId => request(`/flights/${flightId}/availability`);
+export const getSeatAvailability = flightInstanceId => request(`/flights/${encodeURIComponent(flightInstanceId)}/availability`);
 export const createBooking = (flightInstanceId, passengers) => request('/bookings', {
   method: 'POST', body: JSON.stringify({ flightInstanceId, passengers })
 });

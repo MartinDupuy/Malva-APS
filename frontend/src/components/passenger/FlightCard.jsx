@@ -41,7 +41,13 @@ function formatFlightDate(date) {
 
 export function FlightCard({ flight, criteria = {}, onSelect }) {
   const [isSelecting, setIsSelecting] = useState(false);
-  if (isSelecting) return <SeatSelection flight={flight} onBack={() => setIsSelecting(false)} />;
+  if (isSelecting) return <SeatSelection
+    flight={flight}
+    flightInstanceId={flight.flightInstanceId}
+    passengerCount={criteria.passengers}
+    cabinClass={criteria.cabinClass || 'all'}
+    onBack={() => setIsSelecting(false)}
+  />;
   const passengers = Number(criteria.passengers || 0);
   const maxFare = criteria.tariff === '' || criteria.tariff === undefined ? null : Number(criteria.tariff);
   const showEconomy = criteria.cabinClass !== 'firstClass'
