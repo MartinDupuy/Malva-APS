@@ -49,11 +49,12 @@ function createApp({
     emailSender ? new NotifyFlightChange({ bookingRepository, emailSender }) : null
   );
 
-  const flightController = new FlightController(flightRepository, { notifyFlightChange });
+  const getAvailability = new GetAvailability(flightRepository, seatHoldRepository, seatFactory);
+  const flightController = new FlightController(flightRepository, { notifyFlightChange, getAvailability });
   const bookingController = new BookingController({
     flightRepository,
     seatFactory,
-    getAvailability: new GetAvailability(flightRepository, seatHoldRepository, seatFactory),
+    getAvailability,
     createBooking: new CreateBooking(bookingRepository, seatHoldRepository),
     confirmBooking: new ConfirmBooking(bookingRepository, seatHoldRepository),
     bookingRepository

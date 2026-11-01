@@ -7,19 +7,15 @@ const SearchFlights = require('../use-cases/search-flights');
 
 class FlightController {
   constructor(flightRepository, optionsOrNotifier = {}) {
+    const options = optionsOrNotifier && typeof optionsOrNotifier.execute === 'function'
+      ? { notifyFlightChange: optionsOrNotifier }
+      : optionsOrNotifier || {};
     this.createFlight = new CreateFlight(flightRepository);
     this.updateFlight = new UpdateFlight(flightRepository);
     this.cancelFlight = new CancelFlight(flightRepository);
-    this.searchFlights = new SearchFlights(flightRepository);
+    this.searchFlights = new SearchFlights(flightRepository, options.getAvailability);
     this.flightRepository = flightRepository;
-
-    if (optionsOrNotifier && typeof optionsOrNotifier.execute === 'function') {
-      this.notifyFlightChange = optionsOrNotifier;
-    } else if (optionsOrNotifier && optionsOrNotifier.notifyFlightChange) {
-      this.notifyFlightChange = optionsOrNotifier.notifyFlightChange;
-    } else {
-      this.notifyFlightChange = null;
-    }
+    this.notifyFlightChange = options.notifyFlightChange || null;
   }
 
   async create(request, response) {

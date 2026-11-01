@@ -14,7 +14,7 @@ class InMemorySeatHoldRepository {
     const seats = this.seatsByFlightInstance.get(flightInstanceId) || [];
     return seats.map((seat) => ({
       seat,
-      status: this._activeHoldFor(flightInstanceId, seat.id) ? 'HELD' : 'AVAILABLE'
+      status: this._occupyingHoldFor(flightInstanceId, seat.id)
     }));
   }
 
@@ -28,7 +28,7 @@ class InMemorySeatHoldRepository {
     }
 
     const now = this.clock();
-    if (seatIds.some((seatId) => this._activeHoldFor(flightInstanceId, seatId, now))) {
+    if (seatIds.some((seatId) => this._occupyingHoldFor(flightInstanceId, seatId) !== 'AVAILABLE')) {
       throw new Error('one or more seats are already held');
     }
 
@@ -58,13 +58,13 @@ class InMemorySeatHoldRepository {
     return hold;
   }
 
-  _activeHoldFor(flightInstanceId, seatId, now = this.clock()) {
-    return [...this.holds.values()].find(
-      (hold) =>
-        hold.flightInstanceId === flightInstanceId &&
-        hold.seatIds.includes(seatId) &&
-        hold.isActive(now)
+  _occupyingHoldFor(flightInstanceId, seatId) {
+    const holds = [...this.holds.values()].filter(item =>
+      item.flightInstanceId === flightInstanceId && item.seatIds.includes(seatId)
     );
+    if (holds.some(hold => hold.status === HOLD_STATUSES.CONFIRMED)) return 'CONFIRMED';
+    if (holds.some(hold => hold.isActive(this.clock()))) return 'HELD';
+    return 'AVAILABLE';
   }
 
   _requiredHold(holdId) {

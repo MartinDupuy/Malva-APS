@@ -3,7 +3,7 @@ import { SearchForm } from '../components/passenger/SearchForm';
 import { useFlightSearch } from '../hooks/useFlightSearch';
 
 export function PassengerSearchPage({ onNavigate, auth }) {
-  const { results, isLoading, error, hasSearched, performSearch } = useFlightSearch();
+  const { results, isLoading, error, hasSearched, searchedCriteria, performSearch } = useFlightSearch();
 
   return (
     <main className="passenger-page">
@@ -83,7 +83,7 @@ export function PassengerSearchPage({ onNavigate, auth }) {
         )}
         {!isLoading && !error && results.length > 0 && (
           <div className="flight-results">
-            {results.map(flight => <FlightCard key={flight.id} flight={flight} />)}
+            {results.map(flight => <FlightCard key={flight.id} flight={flight} criteria={searchedCriteria} />)}
           </div>
         )}
         {!hasSearched && (
