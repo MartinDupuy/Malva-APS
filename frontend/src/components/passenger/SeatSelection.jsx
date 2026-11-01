@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useBooking } from '../../hooks/useBooking';
 
-export function SeatSelection({ flight, flightInstanceId = flight.id, passengerCount, cabinClass = 'all', onBack }) {
-  const { seats, selectedSeatIds, toggleSeat, clearSelection, booking, reserve, confirm, error, isLoading } = useBooking(flight, flightInstanceId);
+export function SeatSelection({ flight, token, flightInstanceId = flight.id, passengerCount, cabinClass = 'all', onBack }) {
+  const { seats, selectedSeatIds, toggleSeat, clearSelection, booking, reserve, confirm, error, isLoading } = useBooking(flight, token, flightInstanceId);
   const [passengers, setPassengers] = useState({});
   const requestedCount = Number(passengerCount);
   const hasRequestedCount = Number.isInteger(requestedCount) && requestedCount > 0;

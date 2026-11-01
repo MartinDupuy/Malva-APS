@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { confirmBooking, createBooking, getSeatAvailability } from '../services/bookingService';
 
-export function useBooking(flight, flightInstanceId = flight.id) {
+export function useBooking(flight, token, flightInstanceId = flight.id) {
   const [seats, setSeats] = useState([]);
   const [selectedSeatIds, setSelectedSeatIds] = useState([]);
   const [booking, setBooking] = useState(null);
@@ -57,7 +57,7 @@ export function useBooking(flight, flightInstanceId = flight.id) {
   const reserve = async passengers => {
     setIsLoading(true); setError(null);
     try {
-      const result = await createBooking(flightInstanceId, passengers);
+      const result = await createBooking(flightInstanceId, passengers, token);
       bookingRef.current = result;
       setBooking(result);
       return result;
@@ -66,6 +66,6 @@ export function useBooking(flight, flightInstanceId = flight.id) {
     finally { setIsLoading(false); }
   };
 
-  const confirm = async () => { const result = await confirmBooking(booking.id); setBooking(result); return result; };
+  const confirm = async () => { const result = await confirmBooking(booking.id, token); setBooking(result); return result; };
   return { seats, selectedSeatIds, toggleSeat, clearSelection, booking, reserve, confirm, error, isLoading };
 }

@@ -39,10 +39,11 @@ function formatFlightDate(date) {
     .format(new Date(`${date}T12:00:00`));
 }
 
-export function FlightCard({ flight, criteria = {}, onSelect }) {
+export function FlightCard({ flight, criteria = {}, token, onSelect }) {
   const [isSelecting, setIsSelecting] = useState(false);
   if (isSelecting) return <SeatSelection
     flight={flight}
+    token={token}
     flightInstanceId={flight.flightInstanceId}
     passengerCount={criteria.passengers}
     cabinClass={criteria.cabinClass || 'all'}

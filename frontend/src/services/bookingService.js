@@ -15,7 +15,16 @@ async function request(path, options = {}) {
 }
 
 export const getSeatAvailability = flightInstanceId => request(`/flights/${encodeURIComponent(flightInstanceId)}/availability`);
-export const createBooking = (flightInstanceId, passengers) => request('/bookings', {
-  method: 'POST', body: JSON.stringify({ flightInstanceId, passengers })
-});
-export const confirmBooking = bookingId => request(`/bookings/${bookingId}/confirm`, { method: 'POST' });
+
+export const createBooking = (flightInstanceId, passengers, token) =>
+  request('/bookings', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ flightInstanceId, passengers })
+  });
+
+export const confirmBooking = (bookingId, token) =>
+  request(`/bookings/${bookingId}/confirm`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` }
+  });

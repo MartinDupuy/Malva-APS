@@ -3,6 +3,7 @@ const InMemoryFlightRepository = require('./services/flights/adapters/in-memory-
 const FlightController = require('./services/flights/adapters/flight-controller');
 const createFlightRouter = require('./infra/flight-router');
 const createBookingRouter = require('./infra/booking-router');
+const createReportRouter = require('./infra/report-router');
 const BookingController = require('./services/bookings/adapters/booking-controller');
 const InMemoryBookingRepository = require('./services/bookings/adapters/in-memory-booking-repository');
 const SeatFactory = require('./services/bookings/adapters/seat-factory');
@@ -13,6 +14,7 @@ const { InMemorySeatHoldRepository } = require('./services/seats/adapters/in-mem
 const PostgresSeatHoldRepository = require('./services/seats/adapters/postgres-seat-hold-repository');
 const PostgresBookingRepository = require('./services/bookings/adapters/postgres-booking-repository');
 const InMemoryUserRepository = require('./services/auth/adapters/InMemoryUserRepository');
+const { createInitialUsers } = require('./services/auth/seeds/initial-users');
 const BcryptPasswordHasher = require('./services/auth/adapters/BcryptPasswordHasher');
 const JwtTokenService = require('./services/auth/adapters/JwtTokenService');
 const RegisterUser = require('./services/auth/use-cases/RegisterUser');
@@ -24,10 +26,13 @@ const requireRole = require('./infra/role-middleware');
 const { ROLES } = require('./services/auth/domain/Roles');
 const SmtpEmailSender = require('./services/notifications/adapters/SmtpEmailSender');
 const NotifyFlightChange = require('./services/notifications/use-cases/notify-flight-change');
+const GetOccupancyReport = require('./services/reporting/use-cases/get-occupancy-report');
+const OccupancyReportController = require('./services/reporting/adapters/occupancy-report-controller');
+const PdfOccupancyReportGenerator = require('./services/reporting/adapters/pdf-occupancy-report-generator');
 
 function createApp({
   bookingRepository: bookingRepositoryType = process.env.BOOKING_REPOSITORY || 'postgres',
-  userRepository = new InMemoryUserRepository(),
+  userRepository = new InMemoryUserRepository(createInitialUsers()),
   passwordHasher = new BcryptPasswordHasher(),
   tokenService = new JwtTokenService(),
   protectRoutes = false,
@@ -59,6 +64,10 @@ function createApp({
     confirmBooking: new ConfirmBooking(bookingRepository, seatHoldRepository),
     bookingRepository
   });
+  const occupancyReportController = new OccupancyReportController({
+    getOccupancyReport: new GetOccupancyReport({ flightRepository, bookingRepository, seatFactory }),
+    pdfGenerator: new PdfOccupancyReportGenerator()
+  });
 
   const registerUser = new RegisterUser(userRepository, passwordHasher);
   const loginUser = new LoginUser(userRepository, passwordHasher, tokenService);
@@ -82,6 +91,10 @@ function createApp({
   app.use('/api/auth', createAuthRouter(authController));
   app.use('/api/flights', createFlightRouter(flightController, protectRoutes ? { authMiddleware, roleMiddleware: adminOnlyMiddleware } : {}));
   app.use('/api', createBookingRouter(bookingController, protectRoutes ? { authMiddleware } : {}));
+  app.use('/api/reports', createReportRouter(
+    occupancyReportController,
+    protectRoutes ? { authMiddleware, roleMiddleware: adminOnlyMiddleware } : {}
+  ));
   app.use(handleApiError);
   return app;
 }

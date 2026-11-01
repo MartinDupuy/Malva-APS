@@ -2,6 +2,7 @@ import { StrictMode, useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { PassengerSearchPage } from './pages/PassengerSearchPage';
 import { AdminFlightsPage } from './pages/AdminFlightsPage';
+import { AdminOccupancyPage } from './pages/AdminOccupancyPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { useAuth } from './hooks/useAuth';
@@ -31,7 +32,7 @@ function App() {
   }, []);
 
   // Strict route protection for admin page
-  if (currentView === 'admin' && auth.role !== 'ADMIN') {
+  if (['admin', 'occupancy'].includes(currentView) && auth.role !== 'ADMIN') {
     return (
       <main className="auth-page">
         <header className="auth-header">
@@ -67,6 +68,8 @@ function App() {
       return <RegisterPage onNavigate={navigate} auth={auth} />;
     case 'admin':
       return <AdminFlightsPage onNavigate={navigate} auth={auth} />;
+    case 'occupancy':
+      return <AdminOccupancyPage onNavigate={navigate} auth={auth} />;
     case 'search':
     default:
       return <PassengerSearchPage onNavigate={navigate} auth={auth} />;
