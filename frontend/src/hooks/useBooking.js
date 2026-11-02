@@ -55,17 +55,36 @@ export function useBooking(flight, token, flightInstanceId = flight.id) {
   const clearSelection = () => setSelectedSeatIds([]);
 
   const reserve = async passengers => {
-    setIsLoading(true); setError(null);
+    setIsLoading(true);
+    setError(null);
     try {
       const result = await createBooking(flightInstanceId, passengers, token);
       bookingRef.current = result;
       setBooking(result);
       return result;
+    } catch (requestError) {
+      setError(requestError);
+      await refreshAvailability();
+      throw requestError;
+    } finally {
+      setIsLoading(false);
     }
-    catch (requestError) { setError(requestError); await refreshAvailability(); throw requestError; }
-    finally { setIsLoading(false); }
   };
 
-  const confirm = async () => { const result = await confirmBooking(booking.id, token); setBooking(result); return result; };
+  const confirm = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const result = await confirmBooking(booking.id, token);
+      setBooking(result);
+      return result;
+    } catch (requestError) {
+      setError(requestError);
+      throw requestError;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return { seats, selectedSeatIds, toggleSeat, clearSelection, booking, reserve, confirm, error, isLoading };
 }

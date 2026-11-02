@@ -45,14 +45,48 @@ export function SeatSelection({ flight, token, flightInstanceId = flight.id, pas
       <h1>{flight.originAirport} → {flight.destinationAirport}</h1>
       <p>{hasRequestedCount ? `Seleccioná ${requestedCount} asientos en la clase buscada.` : 'Elegí hasta 9 asientos.'} El bloqueo dura 10 minutos.</p>
     </div>
-    {error && <div className="alert error">{error.message}</div>}
+    {error && <div className="alert error" style={{ margin: '12px 0', padding: '12px', background: '#ffebee', color: '#c62828', borderRadius: '6px' }}>{error.message}</div>}
+    {!token && (
+      <div className="alert info" style={{ margin: '12px 0', padding: '12px', background: '#e3f2fd', color: '#1565c0', borderRadius: '6px' }}>
+        Iniciá sesión como pasajero para poder confirmar tu reserva con tus datos de usuario.
+      </div>
+    )}
     {booking ? (
-      <section className="booking-confirmation">
-        <span className="eyebrow">Asientos bloqueados</span>
-        <h2>Reserva lista para confirmar</h2>
-        <p>Identificador: {booking.id}</p>
-        <button className="primary-button" type="button" onClick={confirm}>Confirmar compra</button>
-      </section>
+      booking.status === 'CONFIRMED' ? (
+        <section className="booking-confirmation success" style={{ borderLeft: '4px solid #2e7d32' }}>
+          <span className="eyebrow" style={{ color: '#2e7d32', fontWeight: 'bold' }}>✓ Compra Confirmada</span>
+          <h2>¡Tu reserva está confirmada con éxito!</h2>
+          <p>Identificador de reserva: <strong>{booking.id}</strong></p>
+          <p>Vuelo: <strong>{flight.flightNumber}</strong> ({flight.originAirport} → {flight.destinationAirport})</p>
+          {booking.passengers && booking.passengers.length > 0 && (
+            <div style={{ margin: '16px 0', padding: '12px', background: '#f5f5f5', borderRadius: '6px', fontSize: '14px' }}>
+              <strong>Pasajeros confirmados:</strong>
+              <ul style={{ margin: '8px 0 0 18px', padding: 0 }}>
+                {booking.passengers.map(p => (
+                  <li key={p.seatId} style={{ marginBottom: '4px' }}>
+                    <strong>{p.name}</strong> ({p.email}) — Asiento {seats.find(s => s.id === p.seatId)?.number || p.seatId}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <div style={{ marginTop: '20px' }}>
+            <button className="primary-button" type="button" onClick={onBack}>
+              Volver a búsqueda de vuelos
+            </button>
+          </div>
+        </section>
+      ) : (
+        <section className="booking-confirmation">
+          <span className="eyebrow">Asientos bloqueados</span>
+          <h2>Reserva lista para confirmar</h2>
+          <p>Identificador: <strong>{booking.id}</strong></p>
+          <p>Los asientos se encuentran retenidos temporalmente a tu nombre.</p>
+          <button className="primary-button" type="button" onClick={confirm} disabled={isLoading}>
+            {isLoading ? 'Confirmando compra...' : 'Confirmar compra'}
+          </button>
+        </section>
+      )
     ) : (
       <form onSubmit={submit}>
         <div className="cabin-tabs">
