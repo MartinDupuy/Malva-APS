@@ -15,6 +15,7 @@ const PostgresSeatHoldRepository = require('./services/seats/adapters/postgres-s
 const PostgresBookingRepository = require('./services/bookings/adapters/postgres-booking-repository');
 const InMemoryUserRepository = require('./services/auth/adapters/InMemoryUserRepository');
 const { createInitialUsers } = require('./services/auth/seeds/initial-users');
+const { createInitialFlights } = require('./services/flights/seeds/initial-flights');
 const BcryptPasswordHasher = require('./services/auth/adapters/BcryptPasswordHasher');
 const JwtTokenService = require('./services/auth/adapters/JwtTokenService');
 const RegisterUser = require('./services/auth/use-cases/RegisterUser');
@@ -39,9 +40,12 @@ function createApp({
   emailSender: customEmailSender = null,
   notifyFlightChange: customNotifyFlightChange = null,
   enableCounterAgentMock = process.env.ENABLE_COUNTER_AGENT_MOCK === 'true',
+  seedFlights = process.env.SEED_FLIGHTS === 'true',
+  flightRepository: customFlightRepository = null,
 } = {}) {
   const app = express();
-  const flightRepository = createFlightRepository(process.env.FLIGHT_REPOSITORY || 'memory');
+  const initialFlights = seedFlights ? createInitialFlights() : [];
+  const flightRepository = customFlightRepository || createFlightRepository(process.env.FLIGHT_REPOSITORY || 'memory', initialFlights);
   const seatsByFlightInstance = new Map();
   const seatFactory = new SeatFactory(seatsByFlightInstance);
   const usePostgres = bookingRepositoryType === 'postgres';
@@ -63,13 +67,12 @@ function createApp({
     getAvailability,
     createBooking: new CreateBooking(bookingRepository, seatHoldRepository),
     confirmBooking: new ConfirmBooking(bookingRepository, seatHoldRepository),
-    bookingRepository,
-    seatHoldRepository
+    bookingRepository
   });
-  const occupancyReportController = new OccupancyReportController({
-    getOccupancyReport: new GetOccupancyReport({ flightRepository, bookingRepository, seatFactory }),
-    pdfGenerator: new PdfOccupancyReportGenerator()
-  });
+
+  const getOccupancyReport = new GetOccupancyReport({ flightRepository, seatHoldRepository });
+  const pdfGenerator = new PdfOccupancyReportGenerator();
+  const occupancyReportController = new OccupancyReportController({ getOccupancyReport, pdfGenerator });
 
   const registerUser = new RegisterUser(userRepository, passwordHasher);
   const loginUser = new LoginUser(userRepository, passwordHasher, tokenService);
@@ -110,7 +113,7 @@ function createApp({
 }
 
 function createServer() {
-  return createApp({ protectRoutes: true });
+  return createApp({ protectRoutes: true, seedFlights: true });
 }
 
 function handleApiError(error, request, response, next) {
@@ -124,8 +127,8 @@ function handleApiError(error, request, response, next) {
   return response.status(500).json({ error: error.message });
 }
 
-function createFlightRepository(repositoryType) {
-  if (repositoryType === 'memory') return new InMemoryFlightRepository();
+function createFlightRepository(repositoryType, initialFlights = []) {
+  if (repositoryType === 'memory') return new InMemoryFlightRepository(initialFlights);
   throw new Error(`Unsupported flight repository: ${repositoryType}`);
 }
 

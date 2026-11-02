@@ -1,6 +1,9 @@
 class InMemoryFlightRepository {
-  constructor() {
+  constructor(initialFlights = []) {
     this.flights = new Map();
+    for (const flight of initialFlights) {
+      this.flights.set(flight.id, flight);
+    }
   }
 
   async create(flight) {
