@@ -5,7 +5,7 @@ import { FlightForm } from '../components/flights/FlightForm';
 import { FlightTable } from '../components/flights/FlightTable';
 
 export function AdminFlightsPage({ onNavigate, auth }) {
-  const { flights, loading, error, saveFlight, cancelFlight } = useFlights();
+  const { flights, loading, error, saveFlight, cancelFlight } = useFlights(auth?.token);
   const { form, editingId, editFlight, resetForm, updateField, toggleDay } = useFlightForm();
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState('');
@@ -40,7 +40,8 @@ export function AdminFlightsPage({ onNavigate, auth }) {
           <span>malva<span className="brand-dot">.</span></span>
         </div>
         <nav>
-          <a className="nav-item active" href="#flights"><span>▦</span> Itinerarios</a>
+          <a className="nav-item active" href="#admin"><span>▦</span> Itinerarios</a>
+          <a className="nav-item" href="#occupancy"><span>◒</span> Reportes</a>
           <button
             className="nav-item"
             type="button"

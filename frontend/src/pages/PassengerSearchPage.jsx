@@ -83,7 +83,7 @@ export function PassengerSearchPage({ onNavigate, auth }) {
         )}
         {!isLoading && !error && results.length > 0 && (
           <div className="flight-results">
-            {results.map(flight => <FlightCard key={flight.id} flight={flight} criteria={searchedCriteria} />)}
+            {results.map(flight => <FlightCard key={flight.id} flight={flight} criteria={searchedCriteria} token={auth?.token} />)}
           </div>
         )}
         {!hasSearched && (

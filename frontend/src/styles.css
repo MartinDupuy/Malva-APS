@@ -53,6 +53,25 @@ fieldset { margin: 23px 0 0; padding: 0; border: 0; } legend { margin-bottom: 10
 .primary-button { width: 100%; margin-top: 26px; padding: 13px; border: 0; border-radius: 5px; background: #b7d853; color: #20331c; font-size: 11px; font-weight: 800; } .primary-button:hover { background: #c7e968; } .primary-button:disabled { opacity: .55; cursor: wait; }
 .empty-state { display: grid; min-height: 220px; place-content: center; gap: 8px; border: 1px dashed #cad9ce; border-radius: 8px; color: #789187; text-align: center; font-size: 12px; } .empty-state strong { color: #35594b; }
 .alert { margin-bottom: 16px; padding: 11px 14px; border-radius: 5px; font-size: 11px; } .alert.error { background: #f9e7e1; color: #a14f3c; } .alert.success { background: #e7f3e4; color: #487346; }
+.report-content { padding: 30px 46px 46px; }
+.report-filters { display: grid; grid-template-columns: repeat(4, minmax(130px, 1fr)) auto auto; gap: 12px; align-items: end; margin-bottom: 25px; padding: 18px; border: 1px solid #dce5dd; border-radius: 8px; background: #fff; }
+.field select { width: 100%; padding: 10px 11px; border: 1px solid #d9e3db; border-radius: 5px; outline: 0; background: #fbfcfa; color: #1d3c32; font-size: 12px; }
+.report-submit, .secondary-button { width: auto; margin-top: 0; min-height: 38px; padding: 0 16px; white-space: nowrap; }
+.secondary-button { border: 1px solid #cbd9ce; border-radius: 5px; background: #fff; color: #426557; font-size: 11px; font-weight: 800; }
+.secondary-button:disabled { opacity: .5; cursor: not-allowed; }
+.report-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 25px; }
+.report-summary > div { padding: 18px; border: 1px solid #dce5dd; border-radius: 8px; background: #fff; }
+.report-summary span { display: block; color: #789087; font-family: 'DM Mono', monospace; font-size: 9px; text-transform: uppercase; }
+.report-summary strong { display: block; margin-top: 11px; color: #1e3b32; font-size: 25px; letter-spacing: -1px; }
+.report-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 24px; }
+.report-panel { min-width: 0; padding: 25px; border: 1px solid #dce5dd; border-radius: 8px; background: #fff; }
+.report-panel.table-wrap { padding: 0; }
+.report-panel table { min-width: 600px; }
+.chart-row { display: grid; grid-template-columns: 130px 1fr 48px; gap: 12px; align-items: center; margin-bottom: 17px; }
+.chart-label strong, .chart-label span { display: block; }.chart-label strong { color: #1e3b32; font-family: 'DM Mono', monospace; font-size: 11px; }.chart-label span { margin-top: 4px; color: #8da097; font-size: 9px; }
+.chart-track { height: 9px; overflow: hidden; border-radius: 6px; background: #e8eee8; }.chart-track i { display: block; height: 100%; border-radius: inherit; background: #a9c750; }.chart-row b { color: #426557; font-family: 'DM Mono', monospace; font-size: 10px; text-align: right; }
+@media (max-width: 1100px) { .report-filters { grid-template-columns: repeat(2, 1fr); }.report-layout { grid-template-columns: 1fr; } }
+@media (max-width: 700px) { .report-content { padding: 22px 20px 30px; }.report-filters, .report-summary { grid-template-columns: 1fr 1fr; }.report-submit, .secondary-button { width: 100%; }.report-summary strong { font-size: 21px; }.report-panel { padding: 18px; }.chart-row { grid-template-columns: 105px 1fr 42px; gap: 8px; } }
 @media (max-width: 1100px) { .content-grid { grid-template-columns: 1fr; } .form-panel { order: -1; } .flight-form { max-width: 700px; } }
 @media (max-width: 700px) { .sidebar { width: 65px; flex-basis: 65px; padding: 20px 10px; } .brand { margin: 0 auto 50px; } .brand > span:last-child { display: none; } .nav-item { justify-content: center; padding: 13px 0; font-size: 0; } .nav-item span { font-size: 18px; } .sidebar-foot { justify-content: center; padding: 15px 0 0; } .sidebar-foot > div, .more { display: none; } .topbar { align-items: flex-start; gap: 15px; padding: 25px 20px 20px; } .topbar-meta { display: none; } .content-grid { padding: 22px 20px 30px; } .form-panel { padding: 19px; } .form-grid { gap: 13px 9px; } .day { font-size: 8px; } }
 .passenger-page { min-height: 100vh; background: #f5f7f2; color: #17352e; }

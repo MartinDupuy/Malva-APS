@@ -2,6 +2,7 @@ import { StrictMode, useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { PassengerSearchPage } from './pages/PassengerSearchPage';
 import { AdminFlightsPage } from './pages/AdminFlightsPage';
+import { AdminOccupancyPage } from './pages/AdminOccupancyPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { CounterAgentPage } from './pages/CounterAgentPage';
@@ -34,11 +35,11 @@ function App() {
   useEffect(() => {
     if (!auth.isAuthenticated) return;
     if (auth.role === 'COUNTER_AGENT' && currentView !== 'counter') navigate('counter');
-    if (auth.role === 'ADMIN' && !['admin'].includes(currentView)) navigate('admin');
+    if (auth.role === 'ADMIN' && ['search', 'login', 'register', 'counter'].includes(currentView)) navigate('admin');
   }, [auth.isAuthenticated, auth.role, currentView]);
 
   // Strict route protection for admin page
-  if (currentView === 'admin' && auth.role !== 'ADMIN') {
+  if (['admin', 'occupancy'].includes(currentView) && auth.role !== 'ADMIN') {
     return (
       <main className="auth-page">
         <header className="auth-header">
@@ -94,6 +95,8 @@ function App() {
       return <AdminFlightsPage onNavigate={navigate} auth={auth} />;
     case 'counter':
       return <CounterAgentPage onNavigate={navigate} auth={auth} />;
+    case 'occupancy':
+      return <AdminOccupancyPage onNavigate={navigate} auth={auth} />;
     case 'search':
     default:
       return <PassengerSearchPage onNavigate={navigate} auth={auth} />;

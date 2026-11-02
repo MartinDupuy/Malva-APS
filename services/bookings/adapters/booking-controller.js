@@ -58,7 +58,7 @@ class BookingController {
       const flight = await this.flightRepository.findById(identity.flightId);
       if (!flight) return response.status(404).json({ error: 'flight not found' });
       const canonicalInstanceId = identity.date ? new FlightInstance(flight, identity.date).id : flight.id;
-      const bookings = await this.bookingRepository.findByFlightInstanceId(canonicalInstanceId);
+      const bookings = await this.bookingRepository.findManifestByFlightInstanceId(canonicalInstanceId);
       const activeBookings = await Promise.all(bookings.map(async booking => ({
         booking,
         status: await this._currentStatus(booking)
