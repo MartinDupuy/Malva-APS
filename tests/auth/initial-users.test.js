@@ -26,4 +26,30 @@ describe('initial users', () => {
     expect(body.user).toMatchObject({ email: 'admin@malva.com', name: 'admin', role: 'ADMIN' });
     expect(typeof body.token).toBe('string');
   });
+
+  test('allows the seeded counter agent to log in', async () => {
+    const response = await fetch(`http://127.0.0.1:${port}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: 'mostrador@malva.com', password: '12345678' }),
+    });
+
+    const body = await response.json();
+    expect(response.status).toBe(200);
+    expect(body.user).toMatchObject({ email: 'mostrador@malva.com', name: 'Agente Mostrador', role: 'COUNTER_AGENT' });
+    expect(typeof body.token).toBe('string');
+  });
+
+  test('allows the seeded passenger to log in', async () => {
+    const response = await fetch(`http://127.0.0.1:${port}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: 'pasajero@malva.com', password: '12345678' }),
+    });
+
+    const body = await response.json();
+    expect(response.status).toBe(200);
+    expect(body.user).toMatchObject({ email: 'pasajero@malva.com', name: 'Pasajero Demo', role: 'PASSENGER' });
+    expect(typeof body.token).toBe('string');
+  });
 });

@@ -11,6 +11,18 @@ const INITIAL_USERS = Object.freeze([
     password: '12345678',
     role: ROLES.ADMIN,
   },
+  {
+    email: 'mostrador@malva.com',
+    name: 'Agente Mostrador',
+    password: '12345678',
+    role: ROLES.COUNTER_AGENT,
+  },
+  {
+    email: 'pasajero@malva.com',
+    name: 'Pasajero Demo',
+    password: '12345678',
+    role: ROLES.PASSENGER,
+  },
 ]);
 
 function createInitialUsers() {

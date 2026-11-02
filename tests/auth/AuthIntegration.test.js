@@ -167,16 +167,10 @@ describe('Auth Integration and Route Protection Endpoints', () => {
       });
       passengerToken = passLogin.body.token;
 
-      // Register Admin
-      await request(port, 'POST', '/api/auth/register', {
-        email: 'admin1@example.com',
-        name: 'Admin One',
-        password: 'password123',
-        role: ROLES.ADMIN,
-      });
+      // Login Seeded Admin
       const adminLogin = await request(port, 'POST', '/api/auth/login', {
-        email: 'admin1@example.com',
-        password: 'password123',
+        email: 'admin@malva.com',
+        password: '12345678',
       });
       adminToken = adminLogin.body.token;
     });
