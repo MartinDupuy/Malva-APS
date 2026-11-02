@@ -10,13 +10,22 @@ export function LoginPage({ onNavigate, auth }) {
     setError('');
     try {
       const response = await auth.login(credentials);
-      if (response.user?.role === 'ADMIN') {
-        onNavigate('admin');
-      } else {
-        onNavigate('search');
-      }
+      onNavigate(response.user?.role === 'ADMIN' ? 'admin' : response.user?.role === 'COUNTER_AGENT' ? 'counter' : 'search');
     } catch (err) {
       setError(err.message || 'Error al iniciar sesión');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMockLogin = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      await auth.loginMockCounterAgent();
+      onNavigate('counter');
+    } catch (err) {
+      setError(err.message || 'No se pudo iniciar la sesión de demostración');
     } finally {
       setLoading(false);
     }
@@ -40,6 +49,11 @@ export function LoginPage({ onNavigate, auth }) {
           loading={loading}
           error={error}
         />
+        {import.meta.env.VITE_ENABLE_COUNTER_AGENT_MOCK === 'true' && (
+          <button className="auth-demo-btn" type="button" onClick={handleMockLogin} disabled={loading}>
+            {loading ? 'Ingresando...' : 'Ingresar como empleado de mostrador (demo)'}
+          </button>
+        )}
       </section>
     </main>
   );

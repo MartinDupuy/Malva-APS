@@ -1,5 +1,7 @@
 'use strict';
 
+const { ROLES } = require('../domain/Roles');
+
 class AuthController {
   /**
    * @param {Object} dependencies
@@ -20,7 +22,7 @@ class AuthController {
    */
   async register(req, res) {
     try {
-      const user = await this.registerUser.execute(req.body || {});
+      const user = await this.registerUser.execute({ ...(req.body || {}), role: ROLES.PASSENGER });
       return res.status(201).json({ user });
     } catch (error) {
       if (error.message === 'email already registered') {

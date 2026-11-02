@@ -15,7 +15,7 @@ class InMemoryBookingRepository {
   findByFlightInstanceId(flightInstanceId) {
     const results = [];
     for (const booking of this.bookings.values()) {
-      if (booking.flightInstanceId === flightInstanceId && booking.status === 'CONFIRMED') {
+      if (booking.flightInstanceId === flightInstanceId && ['CONFIRMED', 'HELD'].includes(booking.status)) {
         results.push(booking);
       }
     }

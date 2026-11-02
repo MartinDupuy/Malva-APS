@@ -38,7 +38,7 @@ class PostgresBookingRepository {
   async findByFlightInstanceId(flightInstanceId) {
     await this.ready;
     const { rows } = await this.pool.query(
-      "SELECT * FROM bookings WHERE flight_instance_id = $1 AND status = 'CONFIRMED'",
+      "SELECT * FROM bookings WHERE flight_instance_id = $1 AND status IN ('CONFIRMED', 'HELD')",
       [flightInstanceId]
     );
     return rows.map((row) => new Booking({

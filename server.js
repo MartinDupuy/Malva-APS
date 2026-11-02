@@ -33,6 +33,7 @@ function createApp({
   protectRoutes = false,
   emailSender: customEmailSender = null,
   notifyFlightChange: customNotifyFlightChange = null,
+  enableCounterAgentMock = process.env.ENABLE_COUNTER_AGENT_MOCK === 'true',
 } = {}) {
   const app = express();
   const flightRepository = createFlightRepository(process.env.FLIGHT_REPOSITORY || 'memory');
@@ -57,7 +58,8 @@ function createApp({
     getAvailability,
     createBooking: new CreateBooking(bookingRepository, seatHoldRepository),
     confirmBooking: new ConfirmBooking(bookingRepository, seatHoldRepository),
-    bookingRepository
+    bookingRepository,
+    seatHoldRepository
   });
 
   const registerUser = new RegisterUser(userRepository, passwordHasher);
@@ -65,6 +67,7 @@ function createApp({
   const authController = new AuthController({ registerUser, loginUser });
   const authMiddleware = createAuthMiddleware(tokenService);
   const adminOnlyMiddleware = requireRole(ROLES.ADMIN);
+  const staffOnlyMiddleware = requireRole(ROLES.ADMIN, ROLES.COUNTER_AGENT);
 
   app.use(express.json({ limit: '1mb' }));
   app.get('/', (req, res) => {
@@ -79,9 +82,16 @@ function createApp({
       }
     });
   });
-  app.use('/api/auth', createAuthRouter(authController));
+  const authRouter = createAuthRouter(authController);
+  if (enableCounterAgentMock && process.env.NODE_ENV !== 'production') {
+    authRouter.post('/mock-counter-agent', (request, response) => {
+      const user = { userId: 'mock-counter-agent', email: 'mostrador.demo@malva.test', name: 'Empleado de mostrador', role: ROLES.COUNTER_AGENT };
+      return response.json({ token: tokenService.sign(user), user: { ...user, id: user.userId } });
+    });
+  }
+  app.use('/api/auth', authRouter);
   app.use('/api/flights', createFlightRouter(flightController, protectRoutes ? { authMiddleware, roleMiddleware: adminOnlyMiddleware } : {}));
-  app.use('/api', createBookingRouter(bookingController, protectRoutes ? { authMiddleware } : {}));
+  app.use('/api', createBookingRouter(bookingController, protectRoutes ? { authMiddleware, staffMiddleware: staffOnlyMiddleware } : {}));
   app.use(handleApiError);
   return app;
 }

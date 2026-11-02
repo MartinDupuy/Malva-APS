@@ -116,6 +116,26 @@ La base de datos y el servidor PostgreSQL deben existir y estar disponibles. Si 
 
 La API Express queda disponible en `http://localhost:3000`.
 
+### Demo de empleado de mostrador
+
+> **Aviso para pruebas:** el acceso de mostrador es una identidad simulada. No hay que registrar ni ingresar credenciales de empleado, y no se crea una cuenta persistente. Esta demo sirve para recorrer el panel; la gestión real de cuentas de empleados queda pendiente.
+
+Desde la raíz del proyecto, iniciar el backend en memoria en una terminal:
+
+```bash
+ENABLE_COUNTER_AGENT_MOCK=true BOOKING_REPOSITORY=memory npm start
+```
+
+En una segunda terminal, habilitar el botón demo e iniciar Vite:
+
+```bash
+VITE_ENABLE_COUNTER_AGENT_MOCK=true npm run dev
+```
+
+Abrir `http://localhost:5173`, ir al login y seleccionar **Ingresar como empleado de mostrador (demo)**. El servidor emite un JWT de demostración para autorizar las consultas del panel. El acceso demo solo está disponible fuera de producción y se desactiva cuando `NODE_ENV=production`; no lo habilites en un entorno publicado. El registro público siempre crea pasajeros, nunca cuentas de mostrador o administración.
+
+Para ver vuelos, reservas y pasajeros, cargar vuelos y crear reservas de prueba en el backend. Con el repositorio en memoria, esos datos se borran al reiniciarlo. El manifiesto muestra reservas confirmadas y retenciones vigentes, con nombre y asiento; excluye retenciones vencidas y no expone emails.
+
 ### Levantar el frontend
 
 En una segunda terminal:
@@ -132,9 +152,13 @@ La interfaz Vite queda disponible en `http://localhost:5173` y redirige las llam
 POST   /api/flights
 GET    /api/flights
 GET    /api/flights/search
+GET    /api/bookings/search?flightInstanceId=<vuelo::fecha>
+GET    /api/bookings/:bookingId
 PUT    /api/flights/:id
 DELETE /api/flights/:id
 ```
+
+Las consultas de manifiesto y reserva requieren un JWT de `ADMIN` o `COUNTER_AGENT`. El manifiesto incluye reservas confirmadas y retenidas, y expone solo nombre y asiento de cada pasajero.
 
 Ejemplo de búsqueda:
 

@@ -24,6 +24,15 @@ export function useAuth() {
     return response;
   }, []);
 
+  const loginMockCounterAgent = useCallback(async () => {
+    const response = await authService.mockCounterAgent();
+    setToken(response.token);
+    setUser(response.user);
+    localStorage.setItem(TOKEN_KEY, response.token);
+    localStorage.setItem(USER_KEY, JSON.stringify(response.user));
+    return response;
+  }, []);
+
   const register = useCallback(async ({ name, email, password, role }) => {
     const response = await authService.register({ name, email, password, role });
     return response;
@@ -42,6 +51,7 @@ export function useAuth() {
     role: user?.role || null,
     isAuthenticated: Boolean(token && user),
     login,
+    loginMockCounterAgent,
     register,
     logout,
   };

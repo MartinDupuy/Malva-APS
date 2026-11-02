@@ -4,6 +4,7 @@ import { PassengerSearchPage } from './pages/PassengerSearchPage';
 import { AdminFlightsPage } from './pages/AdminFlightsPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
+import { CounterAgentPage } from './pages/CounterAgentPage';
 import { useAuth } from './hooks/useAuth';
 import './styles.css';
 import './components/passenger/passenger-results.css';
@@ -29,6 +30,12 @@ function App() {
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
+
+  useEffect(() => {
+    if (!auth.isAuthenticated) return;
+    if (auth.role === 'COUNTER_AGENT' && currentView !== 'counter') navigate('counter');
+    if (auth.role === 'ADMIN' && !['admin'].includes(currentView)) navigate('admin');
+  }, [auth.isAuthenticated, auth.role, currentView]);
 
   // Strict route protection for admin page
   if (currentView === 'admin' && auth.role !== 'ADMIN') {
@@ -60,6 +67,24 @@ function App() {
     );
   }
 
+  if (currentView === 'counter' && auth.role !== 'COUNTER_AGENT') {
+    const authenticated = auth.isAuthenticated;
+    return (
+      <main className="auth-page">
+        <header className="auth-header">
+          <div className="auth-brand" onClick={() => navigate('search')}><span className="brand-mark">M</span> malva<span className="brand-dot">.</span></div>
+          <button className="auth-logout-btn" type="button" onClick={() => navigate('search')}>Volver a inicio</button>
+        </header>
+        <section className="auth-container"><div className="auth-card" style={{ textAlign: 'center' }}>
+          <div className="auth-error">Acceso restringido: se requiere el perfil de empleado de mostrador.</div>
+          <button className="auth-submit-btn" type="button" onClick={() => navigate(authenticated ? (auth.role === 'ADMIN' ? 'admin' : 'search') : 'login')}>
+            {authenticated ? 'Ir a mi inicio' : 'Iniciar sesión'}
+          </button>
+        </div></section>
+      </main>
+    );
+  }
+
   switch (currentView) {
     case 'login':
       return <LoginPage onNavigate={navigate} auth={auth} />;
@@ -67,6 +92,8 @@ function App() {
       return <RegisterPage onNavigate={navigate} auth={auth} />;
     case 'admin':
       return <AdminFlightsPage onNavigate={navigate} auth={auth} />;
+    case 'counter':
+      return <CounterAgentPage onNavigate={navigate} auth={auth} />;
     case 'search':
     default:
       return <PassengerSearchPage onNavigate={navigate} auth={auth} />;

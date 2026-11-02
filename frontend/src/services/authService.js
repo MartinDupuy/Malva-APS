@@ -26,4 +26,8 @@ export const authService = {
       body: JSON.stringify({ email, password }),
     });
   },
+
+  async mockCounterAgent() {
+    return request('/auth/mock-counter-agent', { method: 'POST' });
+  },
 };
