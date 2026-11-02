@@ -11,6 +11,29 @@ class InMemoryBookingRepository {
   findById(bookingId) {
     return this.bookings.get(bookingId) || null;
   }
+
+  findByFlightInstanceId(flightInstanceId) {
+    const results = [];
+    for (const booking of this.bookings.values()) {
+      if (booking.flightInstanceId === flightInstanceId && booking.status === 'CONFIRMED') {
+        results.push(booking);
+      }
+    }
+    return results;
+  }
+
+  findManifestByFlightInstanceId(flightInstanceId) {
+    return [...this.bookings.values()].filter(booking =>
+      booking.flightInstanceId === flightInstanceId && ['CONFIRMED', 'HELD'].includes(booking.status)
+    );
+  }
+
+  findByFlightId(flightId) {
+    return [...this.bookings.values()].filter(booking =>
+      (booking.flightInstanceId === flightId || booking.flightInstanceId.startsWith(`${flightId}::`))
+      && booking.status === 'CONFIRMED'
+    );
+  }
 }
 
 module.exports = InMemoryBookingRepository;

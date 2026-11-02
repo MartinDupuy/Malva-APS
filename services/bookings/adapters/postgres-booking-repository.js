@@ -34,6 +34,53 @@ class PostgresBookingRepository {
       status: rows[0].status
     });
   }
+
+  async findByFlightInstanceId(flightInstanceId) {
+    await this.ready;
+    const { rows } = await this.pool.query(
+      "SELECT * FROM bookings WHERE flight_instance_id = $1 AND status = 'CONFIRMED'",
+      [flightInstanceId]
+    );
+    return rows.map((row) => new Booking({
+      id: row.id,
+      flightInstanceId: row.flight_instance_id,
+      holdId: row.hold_id,
+      passengers: typeof row.passengers === 'string' ? JSON.parse(row.passengers) : row.passengers,
+      status: row.status
+    }));
+  }
+
+  async findManifestByFlightInstanceId(flightInstanceId) {
+    await this.ready;
+    const { rows } = await this.pool.query(
+      "SELECT * FROM bookings WHERE flight_instance_id = $1 AND status IN ('CONFIRMED', 'HELD')",
+      [flightInstanceId]
+    );
+    return rows.map((row) => new Booking({
+      id: row.id,
+      flightInstanceId: row.flight_instance_id,
+      holdId: row.hold_id,
+      passengers: typeof row.passengers === 'string' ? JSON.parse(row.passengers) : row.passengers,
+      status: row.status
+    }));
+  }
+
+  async findByFlightId(flightId) {
+    await this.ready;
+    const { rows } = await this.pool.query(
+      `SELECT * FROM bookings
+       WHERE (flight_instance_id = $1 OR flight_instance_id LIKE $2)
+       AND status = 'CONFIRMED'`,
+      [flightId, `${flightId}::%`]
+    );
+    return rows.map((row) => new Booking({
+      id: row.id,
+      flightInstanceId: row.flight_instance_id,
+      holdId: row.hold_id,
+      passengers: typeof row.passengers === 'string' ? JSON.parse(row.passengers) : row.passengers,
+      status: row.status
+    }));
+  }
 }
 
 module.exports = PostgresBookingRepository;

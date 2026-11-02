@@ -3,6 +3,7 @@ const InMemoryFlightRepository = require('./services/flights/adapters/in-memory-
 const FlightController = require('./services/flights/adapters/flight-controller');
 const createFlightRouter = require('./infra/flight-router');
 const createBookingRouter = require('./infra/booking-router');
+const createReportRouter = require('./infra/report-router');
 const BookingController = require('./services/bookings/adapters/booking-controller');
 const InMemoryBookingRepository = require('./services/bookings/adapters/in-memory-booking-repository');
 const SeatFactory = require('./services/bookings/adapters/seat-factory');
@@ -12,11 +13,35 @@ const ConfirmBooking = require('./services/bookings/use-cases/confirm-booking');
 const { InMemorySeatHoldRepository } = require('./services/seats/adapters/in-memory-seat-hold-repository');
 const PostgresSeatHoldRepository = require('./services/seats/adapters/postgres-seat-hold-repository');
 const PostgresBookingRepository = require('./services/bookings/adapters/postgres-booking-repository');
+const InMemoryUserRepository = require('./services/auth/adapters/InMemoryUserRepository');
+const { createInitialUsers } = require('./services/auth/seeds/initial-users');
+const BcryptPasswordHasher = require('./services/auth/adapters/BcryptPasswordHasher');
+const JwtTokenService = require('./services/auth/adapters/JwtTokenService');
+const RegisterUser = require('./services/auth/use-cases/RegisterUser');
+const LoginUser = require('./services/auth/use-cases/LoginUser');
+const AuthController = require('./services/auth/adapters/AuthController');
+const createAuthRouter = require('./infra/auth-router');
+const createAuthMiddleware = require('./infra/auth-middleware');
+const requireRole = require('./infra/role-middleware');
+const { ROLES } = require('./services/auth/domain/Roles');
+const SmtpEmailSender = require('./services/notifications/adapters/SmtpEmailSender');
+const NotifyFlightChange = require('./services/notifications/use-cases/notify-flight-change');
+const GetOccupancyReport = require('./services/reporting/use-cases/get-occupancy-report');
+const OccupancyReportController = require('./services/reporting/adapters/occupancy-report-controller');
+const PdfOccupancyReportGenerator = require('./services/reporting/adapters/pdf-occupancy-report-generator');
 
-function createApp({ bookingRepository: bookingRepositoryType = process.env.BOOKING_REPOSITORY || 'postgres' } = {}) {
+function createApp({
+  bookingRepository: bookingRepositoryType = process.env.BOOKING_REPOSITORY || 'postgres',
+  userRepository = new InMemoryUserRepository(createInitialUsers()),
+  passwordHasher = new BcryptPasswordHasher(),
+  tokenService = new JwtTokenService(),
+  protectRoutes = false,
+  emailSender: customEmailSender = null,
+  notifyFlightChange: customNotifyFlightChange = null,
+  enableCounterAgentMock = process.env.ENABLE_COUNTER_AGENT_MOCK === 'true',
+} = {}) {
   const app = express();
   const flightRepository = createFlightRepository(process.env.FLIGHT_REPOSITORY || 'memory');
-  const flightController = new FlightController(flightRepository);
   const seatsByFlightInstance = new Map();
   const seatFactory = new SeatFactory(seatsByFlightInstance);
   const usePostgres = bookingRepositoryType === 'postgres';
@@ -24,24 +49,68 @@ function createApp({ bookingRepository: bookingRepositoryType = process.env.BOOK
     ? new PostgresSeatHoldRepository({ seatsByFlightInstance })
     : new InMemorySeatHoldRepository({ seatsByFlightInstance });
   const bookingRepository = usePostgres ? new PostgresBookingRepository() : new InMemoryBookingRepository();
+
+  const emailSender = customEmailSender || (process.env.SMTP_HOST ? new SmtpEmailSender() : null);
+  const notifyFlightChange = customNotifyFlightChange || (
+    emailSender ? new NotifyFlightChange({ bookingRepository, emailSender }) : null
+  );
+
+  const getAvailability = new GetAvailability(flightRepository, seatHoldRepository, seatFactory);
+  const flightController = new FlightController(flightRepository, { notifyFlightChange, getAvailability });
   const bookingController = new BookingController({
     flightRepository,
     seatFactory,
-    getAvailability: new GetAvailability(flightRepository, seatHoldRepository, seatFactory),
+    getAvailability,
     createBooking: new CreateBooking(bookingRepository, seatHoldRepository),
     confirmBooking: new ConfirmBooking(bookingRepository, seatHoldRepository),
-    bookingRepository
+    bookingRepository,
+    seatHoldRepository
+  });
+  const occupancyReportController = new OccupancyReportController({
+    getOccupancyReport: new GetOccupancyReport({ flightRepository, bookingRepository, seatFactory }),
+    pdfGenerator: new PdfOccupancyReportGenerator()
   });
 
+  const registerUser = new RegisterUser(userRepository, passwordHasher);
+  const loginUser = new LoginUser(userRepository, passwordHasher, tokenService);
+  const authController = new AuthController({ registerUser, loginUser });
+  const authMiddleware = createAuthMiddleware(tokenService);
+  const adminOnlyMiddleware = requireRole(ROLES.ADMIN);
+  const staffOnlyMiddleware = requireRole(ROLES.ADMIN, ROLES.COUNTER_AGENT);
+
   app.use(express.json({ limit: '1mb' }));
-  app.use('/api/flights', createFlightRouter(flightController));
-  app.use('/api', createBookingRouter(bookingController));
+  app.get('/', (req, res) => {
+    res.json({
+      name: 'Malva Airlines API',
+      status: 'online',
+      frontend: 'http://localhost:5173',
+      endpoints: {
+        auth: '/api/auth',
+        flights: '/api/flights',
+        bookings: '/api'
+      }
+    });
+  });
+  const authRouter = createAuthRouter(authController);
+  if (enableCounterAgentMock && process.env.NODE_ENV !== 'production') {
+    authRouter.post('/mock-counter-agent', (request, response) => {
+      const user = { userId: 'mock-counter-agent', email: 'mostrador.demo@malva.test', name: 'Empleado de mostrador', role: ROLES.COUNTER_AGENT };
+      return response.json({ token: tokenService.sign(user), user: { ...user, id: user.userId } });
+    });
+  }
+  app.use('/api/auth', authRouter);
+  app.use('/api/flights', createFlightRouter(flightController, protectRoutes ? { authMiddleware, roleMiddleware: adminOnlyMiddleware } : {}));
+  app.use('/api', createBookingRouter(bookingController, protectRoutes ? { authMiddleware, staffMiddleware: staffOnlyMiddleware } : {}));
+  app.use('/api/reports', createReportRouter(
+    occupancyReportController,
+    protectRoutes ? { authMiddleware, roleMiddleware: adminOnlyMiddleware } : {}
+  ));
   app.use(handleApiError);
   return app;
 }
 
 function createServer() {
-  return createApp();
+  return createApp({ protectRoutes: true });
 }
 
 function handleApiError(error, request, response, next) {

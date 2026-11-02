@@ -28,21 +28,27 @@ class PostgresSeatHoldRepository {
       );
       CREATE UNIQUE INDEX IF NOT EXISTS active_seat_hold
         ON seat_hold_items (flight_instance_id, seat_id) WHERE status = 'ACTIVE';
+      CREATE UNIQUE INDEX IF NOT EXISTS occupied_seat_hold
+        ON seat_hold_items (flight_instance_id, seat_id) WHERE status IN ('ACTIVE', 'CONFIRMED');
     `);
   }
 
   async getAvailability(flightInstanceId) {
     await this.ready;
     const { rows } = await this.pool.query(
-      `SELECT seat_id FROM seat_hold_items
-       WHERE flight_instance_id = $1 AND status = 'ACTIVE'
-       AND EXISTS (SELECT 1 FROM seat_holds h WHERE h.id = hold_id AND h.expires_at > NOW())`,
+      `SELECT seat_id, status FROM seat_hold_items
+       WHERE flight_instance_id = $1 AND (
+         status = 'CONFIRMED' OR (status = 'ACTIVE'
+         AND EXISTS (SELECT 1 FROM seat_holds h WHERE h.id = hold_id AND h.expires_at > NOW()))
+       )`,
       [flightInstanceId]
     );
-    const held = new Set(rows.map(row => row.seat_id));
+    const occupied = new Map(rows.map(row => [row.seat_id, row.status]));
     return (this.seatsByFlightInstance.get(flightInstanceId) || []).map(seat => ({
       seat,
-      status: held.has(seat.id) ? 'HELD' : 'AVAILABLE'
+      status: occupied.get(seat.id) === 'CONFIRMED'
+        ? 'CONFIRMED'
+        : occupied.has(seat.id) ? 'HELD' : 'AVAILABLE'
     }));
   }
 
@@ -53,6 +59,10 @@ class PostgresSeatHoldRepository {
     try {
       await client.query('BEGIN');
       await client.query("UPDATE seat_holds SET status = 'EXPIRED' WHERE status = 'ACTIVE' AND expires_at <= NOW()");
+      await client.query(`UPDATE seat_hold_items SET status = 'EXPIRED'
+        WHERE status = 'ACTIVE' AND hold_id IN (
+          SELECT id FROM seat_holds WHERE status = 'EXPIRED'
+        )`);
       const expiresAt = new Date(Date.now() + this.ttlMs);
       await client.query(
         'INSERT INTO seat_holds (id, booking_id, flight_instance_id, expires_at, status) VALUES ($1, $2, $3, $4, $5)',

@@ -1,14 +1,34 @@
 const DAY_CODES = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+const FlightInstance = require('../domain/flight-instance');
 
 class SearchFlights {
-  constructor(flightRepository) {
+  constructor(flightRepository, availabilityService = null) {
     this.flightRepository = flightRepository;
+    this.availabilityService = availabilityService;
   }
 
   async execute(criteria = {}) {
     const filters = this._normalizeCriteria(criteria);
     const flights = await this.flightRepository.findAll();
-    return flights.filter(flight => this._matches(flight, filters));
+    const candidates = flights.filter(flight => this._matches(flight, filters));
+    if (!this.availabilityService || filters.passengers === null) {
+      return candidates.map(flight => this._withInstanceId(flight, filters.date));
+    }
+
+    const availableFlights = await Promise.all(candidates.map(async flight => {
+      const instance = filters.date ? new FlightInstance(flight, filters.date) : null;
+      const flightInstanceId = instance?.id || flight.id;
+      const seats = await this.availabilityService.execute(flightInstanceId);
+      const availableSeats = this._countAvailableSeats(seats);
+      if (!this._hasAvailableSeats(availableSeats, filters)) return null;
+      return { ...flight, flightInstanceId, availableSeats };
+    }));
+    return availableFlights.filter(Boolean);
+  }
+
+  _withInstanceId(flight, date) {
+    if (!date) return flight;
+    return { ...flight, flightInstanceId: new FlightInstance(flight, date).id };
   }
 
   _normalizeCriteria(criteria) {
@@ -81,6 +101,20 @@ class SearchFlights {
   _matchesCapacity(flight, criteria) {
     return criteria.passengers === null
       || flight.capacity.hasSeatsFor(criteria.passengers, criteria.cabinClass);
+  }
+
+  _countAvailableSeats(seats) {
+    return seats.reduce((counts, { seat, status }) => {
+      if (status === 'AVAILABLE') counts[seat.cabinClass] += 1;
+      return counts;
+    }, { economy: 0, firstClass: 0 });
+  }
+
+  _hasAvailableSeats(availableSeats, criteria) {
+    const { passengers, cabinClass } = criteria;
+    if (cabinClass === 'economy') return availableSeats.economy >= passengers;
+    if (cabinClass === 'firstClass') return availableSeats.firstClass >= passengers;
+    return availableSeats.economy >= passengers || availableSeats.firstClass >= passengers;
   }
 
   _priceInUnits(price) {

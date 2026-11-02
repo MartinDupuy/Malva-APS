@@ -5,13 +5,13 @@ class SeatFactory {
     this.seatsByFlightInstance = seatsByFlightInstance;
   }
 
-  ensureForFlight(flight) {
-    if (this.seatsByFlightInstance.has(flight.id)) return;
+  ensureForFlight(flight, flightInstanceId = flight.id) {
+    if (this.seatsByFlightInstance.has(flightInstanceId)) return;
     const seats = [
       ...this._createSeats(flight.capacity.economy, 'E', 'economy'),
       ...this._createSeats(flight.capacity.firstClass, 'F', 'firstClass')
     ];
-    this.seatsByFlightInstance.set(flight.id, seats);
+    this.seatsByFlightInstance.set(flightInstanceId, seats);
   }
 
   _createSeats(count, prefix, cabinClass) {

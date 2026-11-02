@@ -1,11 +1,14 @@
+const FlightInstance = require('../../flights/domain/flight-instance');
+
 class BookingController {
-  constructor({ flightRepository, seatFactory, getAvailability, createBooking, confirmBooking, bookingRepository }) {
+  constructor({ flightRepository, seatFactory, getAvailability, createBooking, confirmBooking, bookingRepository, seatHoldRepository }) {
     this.flightRepository = flightRepository;
     this.seatFactory = seatFactory;
     this.getAvailability = getAvailability;
     this.createBooking = createBooking;
     this.confirmBooking = confirmBooking;
     this.bookingRepository = bookingRepository;
+    this.seatHoldRepository = seatHoldRepository;
   }
 
   async availability(request, response, next) {
@@ -25,10 +28,14 @@ class BookingController {
 
   async create(request, response) {
     try {
-      const flight = await this.flightRepository.findById(request.body.flightInstanceId);
+      const identity = FlightInstance.parseId(request.body.flightInstanceId);
+      const flight = await this.flightRepository.findById(identity.flightId);
       if (!flight) return response.status(404).json({ error: 'flight not found' });
-      this.seatFactory.ensureForFlight(flight);
-      const booking = await this.createBooking.execute(request.body);
+      const flightInstanceId = identity.date
+        ? new FlightInstance(flight, identity.date).id
+        : flight.id;
+      this.seatFactory.ensureForFlight(flight, flightInstanceId);
+      const booking = await this.createBooking.execute({ ...request.body, flightInstanceId });
       response.status(201).json(this._serialize(booking));
     } catch (error) {
       this._sendError(response, error);
@@ -38,7 +45,33 @@ class BookingController {
   async get(request, response) {
     const booking = await this.bookingRepository.findById(request.params.bookingId);
     if (!booking) return response.status(404).json({ error: 'booking not found' });
-    return response.json(this._serialize(booking));
+    return response.json(await this._serializeForStaff(booking));
+  }
+
+  async search(request, response) {
+    try {
+      const { flightInstanceId } = request.query;
+      if (typeof flightInstanceId !== 'string' || !flightInstanceId.trim()) {
+        return response.status(400).json({ error: 'flightInstanceId is required' });
+      }
+      const identity = FlightInstance.parseId(flightInstanceId);
+      const flight = await this.flightRepository.findById(identity.flightId);
+      if (!flight) return response.status(404).json({ error: 'flight not found' });
+      const canonicalInstanceId = identity.date ? new FlightInstance(flight, identity.date).id : flight.id;
+      const bookings = await this.bookingRepository.findManifestByFlightInstanceId(canonicalInstanceId);
+      const activeBookings = await Promise.all(bookings.map(async booking => ({
+        booking,
+        status: await this._currentStatus(booking)
+      })));
+      return response.json({
+        flightInstanceId: canonicalInstanceId,
+        bookings: await Promise.all(activeBookings
+          .filter(({ status }) => ['CONFIRMED', 'HELD'].includes(status))
+          .map(({ booking, status }) => this._serializeForStaff(booking, status)))
+      });
+    } catch (error) {
+      return this._sendError(response, error);
+    }
   }
 
   async confirm(request, response) {
@@ -57,6 +90,21 @@ class BookingController {
       passengers: booking.passengers,
       status: booking.status
     };
+  }
+
+  async _serializeForStaff(booking, status = null) {
+    return {
+      id: booking.id,
+      flightInstanceId: booking.flightInstanceId,
+      status: status || await this._currentStatus(booking),
+      passengers: booking.passengers.map(({ name, seatId }) => ({ name, seatId }))
+    };
+  }
+
+  async _currentStatus(booking) {
+    if (booking.status !== 'HELD' || !this.seatHoldRepository || !booking.holdId) return booking.status;
+    const hold = await this.seatHoldRepository.getById(booking.holdId);
+    return hold?.isActive() ? 'HELD' : 'EXPIRED';
   }
 
   _sendError(response, error) {

@@ -14,5 +14,8 @@
 .price-option small { color: #749085; font-size: 9px; }
 .price-option strong { color: #315a4a; font-family: 'DM Mono', monospace; font-size: 12px; }
 .price-option span { color: #a0afa7; font-size: 8px; }
+.price-option.unavailable { border-color: #ead9d3; background: #fbf5f2; }
+.price-option.unavailable strong, .price-option.unavailable span { color: #a16c5d; }
+.search-validation-error { grid-column: 1 / -1; color: #a14f3c; font-size: 11px; }
 @media (max-width: 1100px) { .expanded-search-form { grid-template-columns: 1fr 1fr 1fr 1fr; } .expanded-search-form .swap-mark { display: none; } .expanded-search-form .search-button { grid-column: 1 / -1; } }
 @media (max-width: 700px) { .direct-badge { display: none; } .flight-card-bottom { gap: 12px; } .flight-meta { min-width: 100%; } .price-options { width: 100%; margin-right: 0; } .price-option { flex: 1; min-width: 0; } }
