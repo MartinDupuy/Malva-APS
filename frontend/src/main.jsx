@@ -35,7 +35,7 @@ function App() {
   useEffect(() => {
     if (!auth.isAuthenticated) return;
     if (auth.role === 'COUNTER_AGENT' && currentView !== 'counter') navigate('counter');
-    if (auth.role === 'ADMIN' && ['search', 'login', 'register', 'counter'].includes(currentView)) navigate('admin');
+    if (auth.role === 'ADMIN' && ['login', 'register', 'counter'].includes(currentView)) navigate('admin');
   }, [auth.isAuthenticated, auth.role, currentView]);
 
   // Strict route protection for admin page

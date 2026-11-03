@@ -4,6 +4,17 @@ const INITIAL_CRITERIA = {
   origin: '', destination: '', date: '', passengers: '', tariff: '', cabinClass: ''
 };
 
+export function validateSearchCriteria(criteria) {
+  const passengers = Number(criteria.passengers);
+  if (!Number.isInteger(passengers) || passengers < 1 || passengers > 9) {
+    return 'Ingresá entre 1 y 9 pasajeros.';
+  }
+  if (criteria.origin.trim() === criteria.destination.trim()) {
+    return 'El origen y el destino deben ser distintos.';
+  }
+  return '';
+}
+
 export function SearchForm({ onSearch }) {
   const [criteria, setCriteria] = useState(INITIAL_CRITERIA);
   const [validationError, setValidationError] = useState('');
@@ -16,12 +27,9 @@ export function SearchForm({ onSearch }) {
     event.preventDefault();
     const searchCriteria = { ...criteria };
     const passengers = Number(searchCriteria.passengers);
-    if (!Number.isInteger(passengers) || passengers < 1 || passengers > 9) {
-      setValidationError('Ingresá entre 1 y 9 pasajeros.');
-      return;
-    }
-    if (searchCriteria.origin.trim() === searchCriteria.destination.trim()) {
-      setValidationError('El origen y el destino deben ser distintos.');
+    const error = validateSearchCriteria(searchCriteria);
+    if (error) {
+      setValidationError(error);
       return;
     }
     setValidationError('');
