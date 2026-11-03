@@ -45,15 +45,12 @@ export function LoginPage({ onNavigate, auth }) {
       <section className="auth-container">
         <LoginForm
           onSubmit={handleLogin}
+          onMockLogin={handleMockLogin}
+          showMockLogin={import.meta.env.VITE_ENABLE_COUNTER_AGENT_MOCK === 'true'}
           onSwitchToRegister={() => onNavigate('register')}
           loading={loading}
           error={error}
         />
-        {import.meta.env.VITE_ENABLE_COUNTER_AGENT_MOCK === 'true' && (
-          <button className="auth-demo-btn" type="button" onClick={handleMockLogin} disabled={loading}>
-            {loading ? 'Ingresando...' : 'Ingresar como empleado de mostrador (demo)'}
-          </button>
-        )}
       </section>
     </main>
   );

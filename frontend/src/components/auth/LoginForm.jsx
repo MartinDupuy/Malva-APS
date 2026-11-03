@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export function LoginForm({ onSubmit, onSwitchToRegister, loading, error }) {
+export function LoginForm({ onSubmit, onMockLogin, showMockLogin, onSwitchToRegister, loading, error }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -49,6 +49,11 @@ export function LoginForm({ onSubmit, onSwitchToRegister, loading, error }) {
         <button className="auth-submit-btn" type="submit" disabled={loading || !email || !password}>
           {loading ? 'Iniciando sesión...' : 'Ingresar'}
         </button>
+        {showMockLogin && (
+          <button className="auth-demo-btn" type="button" onClick={onMockLogin} disabled={loading}>
+            {loading ? 'Ingresando...' : 'Ingresar como empleado de mostrador (demo)'}
+          </button>
+        )}
       </form>
 
       <div className="auth-footer-nav">

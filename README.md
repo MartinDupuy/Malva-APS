@@ -132,7 +132,9 @@ En una segunda terminal, habilitar el botón demo e iniciar Vite:
 VITE_ENABLE_COUNTER_AGENT_MOCK=true npm run dev
 ```
 
-Abrir `http://localhost:5173`, ir al login y seleccionar **Ingresar como empleado de mostrador (demo)**. El servidor emite un JWT de demostración para autorizar las consultas del panel. El acceso demo solo está disponible fuera de producción y se desactiva cuando `NODE_ENV=production`; no lo habilites en un entorno publicado. El registro público siempre crea pasajeros, nunca cuentas de mostrador o administración.
+Abrir `http://localhost:5173` y pulsar **Iniciar sesión**. En esa pantalla, el botón **Ingresar como empleado de mostrador (demo)** aparece dentro de la tarjeta, debajo del botón **Ingresar** y del formulario de correo y contraseña. Al pulsarlo, el servidor emite un JWT de demostración para autorizar las consultas del panel.
+
+El botón solo aparece si Vite se inició con `VITE_ENABLE_COUNTER_AGENT_MOCK=true`; si Vite ya estaba iniciado, detenelo y volvé a iniciarlo con esa variable. El acceso demo solo está disponible fuera de producción y se desactiva cuando `NODE_ENV=production`; no lo habilites en un entorno publicado. El registro público siempre crea pasajeros, nunca cuentas de mostrador o administración.
 
 Para ver vuelos, reservas y pasajeros, cargar vuelos y crear reservas de prueba en el backend. Con el repositorio en memoria, esos datos se borran al reiniciarlo. El manifiesto muestra reservas confirmadas y retenciones vigentes, con nombre y asiento; excluye retenciones vencidas y no expone emails.
 
